@@ -1,7 +1,6 @@
 /**
  * Home Page
- * Displays company introduction and featured products
- * MODIFIED: Swapped Hero & Products position, Updated Hydraulic Industry Copy
+ * Mobile Responsive Fixed, HydraServo Spelling Corrected, Layout Optimized
  */
 
 import { createLayout } from './layout';
@@ -9,9 +8,9 @@ import { createLayout } from './layout';
 export async function homePage(env) {
   // Load settings from KV for SEO
   let settings = {
-    site_name: 'Hydroservo Intelligent Equipment',
+    site_name: 'HydraServo Intelligent Equipment',
     site_description: 'Your trusted partner for high-performance hydraulic servo equipment and industrial fluid power solutions worldwide',
-    company_intro: 'We are a leading manufacturer and supplier of hydraulic servo systems and intelligent industrial equipment. With years of technical accumulation in the hydraulic industry, we serve clients across the globe with reliable solutions and exceptional customer service.'
+    company_intro: 'HydraServo Intelligent Equipment Co., Ltd. is a leading professional manufacturer of hydraulic servo equipment and intelligent fluid power systems. With years of technical accumulation in the hydraulic industry, we serve clients across the globe with reliable solutions and exceptional customer service.'
   };
 
   try {
@@ -25,40 +24,31 @@ export async function homePage(env) {
   }
 
   const content = `
-    <!-- 【已调换：1. 特色产品区域现在在最顶部】 -->
-     <!-- Hero Section -->
+    <!-- Hero Section - Mobile Optimized -->
     <section class="hero">
       <div class="container">
-        <h1>Welcome to Hydroservo Intelligent Equipment Co., Ltd.</h1>
+        <h1>Welcome to HydraServo Intelligent Equipment Co., Ltd.</h1>
         <p id="hero-subtitle">Professional Manufacturer of Hydraulic Servo Systems & Intelligent Fluid Power Solutions</p>
-        <div style="margin-top: 2rem;">
-          <a href="/products" class="btn btn-primary hide-on-mobile" style="margin-right: 1rem;">Browse Products</a>
+        <div class="hero-buttons">
+          <a href="/products" class="btn btn-primary">Browse Products</a>
           <a href="/contact" class="btn btn-secondary">Contact Us</a>
         </div>
       </div>
     </section>
 
-    <style>
-      @media (max-width: 768px) {
-        .hide-on-mobile {
-          display: none !important;
-        }
-      }
-    </style>
-
     <!-- Company Introduction -->
-    <section class="container" style="margin-top: 3rem;">
-      <div style="text-align: center; max-width: 800px; margin: 0 auto;">
-        <h2 style="font-size: 2rem; margin-bottom: 1rem; color: var(--primary-color);">About Our Company</h2>
+    <section class="container section-spacing">
+      <div class="intro-container">
+        <h2 style="font-size: 2rem; margin-bottom: 1rem; color: var(--primary-color);">About HydraServo</h2>
         <p id="company-intro" style="color: var(--text-light); font-size: 1.1rem; line-height: 1.8;">
-          Hydroservo Intelligent Equipment Co., Ltd. is a leading professional manufacturer of hydraulic servo equipment and intelligent fluid power systems. 
+          HydraServo Intelligent Equipment Co., Ltd. is a leading professional manufacturer of hydraulic servo equipment and intelligent fluid power systems. 
           With years of technical accumulation in the hydraulic industry, we serve clients across the globe with reliable, efficient and cost-effective hydraulic solutions.
         </p>
       </div>
     </section>
-       <!-- 【已调换：2. 宣传语区域现在在产品下面】 -->
-    <!-- Featured Products -->
-    <section class="container" style="margin-top: 3rem; margin-bottom: 3rem;">
+
+    <!-- Featured Products - Mobile Optimized -->
+    <section class="container section-spacing">
       <h2 style="text-align: center; font-size: 2rem; margin-bottom: 2rem; color: var(--primary-color);">Featured Hydraulic Products</h2>
       <div id="featured-products" class="grid grid-3">
         <div class="spinner"></div>
@@ -69,8 +59,8 @@ export async function homePage(env) {
     </section>
 
     <!-- Company Features -->
-    <section class="container" style="margin-top: 3rem;">
-      <h2 style="text-align: center; font-size: 2rem; margin-bottom: 2rem; color: var(--primary-color);">Why Choose Us</h2>
+    <section class="container section-spacing">
+      <h2 style="text-align: center; font-size: 2rem; margin-bottom: 2rem; color: var(--primary-color);">Why Choose HydraServo</h2>
       <div class="grid grid-3">
         <div class="card">
           <div class="card-content" style="text-align: center;">
@@ -110,6 +100,101 @@ export async function homePage(env) {
         </div>
       </div>
     </section>
+
+    <!-- Mobile Responsive Fix Styles -->
+    <style>
+      /* Hero Section Mobile Fix */
+      .hero h1 {
+        font-size: clamp(1.8rem, 6vw, 3rem) !important;
+        line-height: 1.3 !important;
+        margin-bottom: 1rem !important;
+        word-wrap: break-word;
+      }
+
+      .hero p {
+        font-size: clamp(1rem, 4vw, 1.25rem) !important;
+        line-height: 1.6 !important;
+        margin-bottom: 1.5rem !important;
+      }
+
+      .hero-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        align-items: center;
+        width: 100%;
+      }
+
+      .hero-buttons .btn {
+        width: 100%;
+        max-width: 280px;
+        text-align: center;
+        padding: 1rem 1.5rem;
+        font-size: 1.1rem;
+      }
+
+      /* Section Spacing for Mobile */
+      .section-spacing {
+        margin-top: 2rem !important;
+        margin-bottom: 2rem !important;
+        padding: 0 1rem;
+      }
+
+      /* Intro Container Mobile Fix */
+      .intro-container {
+        text-align: center;
+        max-width: 100%;
+        padding: 0 1rem;
+      }
+
+      .intro-container h2 {
+        font-size: clamp(1.5rem, 5vw, 2rem) !important;
+      }
+
+      .intro-container p {
+        font-size: clamp(1rem, 4vw, 1.1rem) !important;
+        line-height: 1.7 !important;
+      }
+
+      /* Grid Mobile Fix */
+      @media (max-width: 768px) {
+        .grid-3 {
+          grid-template-columns: 1fr 1fr !important;
+          gap: 1rem !important;
+        }
+
+        .card {
+          margin-bottom: 0 !important;
+        }
+
+        .card-image {
+          height: 160px !important;
+        }
+
+        .card-title {
+          font-size: 1rem !important;
+        }
+
+        .card-description {
+          font-size: 0.85rem !important;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .grid-3 {
+          grid-template-columns: 1fr !important;
+        }
+
+        .hero-buttons .btn {
+          max-width: 100%;
+        }
+      }
+
+      /* Hide on mobile removed - show both buttons */
+      .hide-on-mobile {
+        display: inline-block !important;
+      }
+    </style>
   `;
 
   const scripts = `
