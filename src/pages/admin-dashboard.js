@@ -189,6 +189,41 @@ export async function adminDashboard(env) {
           <p id="changePasswordMessage" style="margin-top:10px;"></p>
         </form>
       </section>
+document.getElementById('changePasswordForm')?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const token = localStorage.getItem('adminToken');
+  const messageEl = document.getElementById('changePasswordMessage');
+
+  const currentPassword = document.getElementById('currentPassword').value;
+  const newPassword = document.getElementById('newPassword').value;
+  const confirmPassword = document.getElementById('confirmPassword').value;
+
+  messageEl.textContent = '';
+
+  const res = await fetch('/api/admin/change-password', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({
+      currentPassword,
+      newPassword,
+      confirmPassword
+    })
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    messageEl.textContent = data.error || 'Failed to change password';
+    return;
+  }
+
+  messageEl.textContent = 'Password updated successfully';
+  document.getElementById('changePasswordForm').reset();
+});
 
       <div id="editProductModal" class="modal">
         <div class="modal-content">
