@@ -1,7 +1,6 @@
 /**
  * Admin Dashboard Page
  * Main admin interface for managing products and inquiries
- * 完整还原原有功能 + 新增修改密码 + 欢迎标题配置 + 修复排版与导出问题
  */
 
 export async function adminDashboard(env) {
@@ -12,7 +11,8 @@ export async function adminDashboard(env) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard - B2B Product Exhibition</title>
   <style>
-    /* Main Stylesheet for B2B Website - 完全保留原有样式，保证排版一致 */
+    /* Main Stylesheet for B2B Website */
+
     :root {
       --primary-color: #2563eb;
       --secondary-color: #1e40af;
@@ -399,35 +399,6 @@ export async function adminDashboard(env) {
       margin-top: 0.5rem;
     }
 
-    /* 修复排版：设置页面卡片间距与响应式 */
-    .settings-cards-wrapper {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-      max-width: 800px;
-    }
-
-    .settings-card {
-      background: white;
-      padding: 2rem;
-      border-radius: 0.5rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      width: 100%;
-    }
-
-    .settings-card h3 {
-      font-size: 1.1rem;
-      margin-bottom: 1rem;
-      color: var(--primary-color);
-      border-bottom: 2px solid var(--border-color);
-      padding-bottom: 0.5rem;
-    }
-
-    #password-message {
-      min-height: 20px;
-      margin-bottom: 1rem;
-    }
-
     @media (max-width: 768px) {
       .admin-sidebar {
         width: 100%;
@@ -437,15 +408,12 @@ export async function adminDashboard(env) {
       .admin-content {
         margin-left: 0;
       }
-      .settings-cards-wrapper {
-        max-width: 100%;
-      }
     }
   </style>
 </head>
 <body>
   <div class="admin-layout">
-    <!-- Sidebar - 完全还原原有导航 -->
+    <!-- Sidebar -->
     <aside class="admin-sidebar">
       <div style="padding: 0 2rem 2rem 2rem;">
         <h2 style="color: var(--accent-color); font-size: 1.5rem;">B2B Admin</h2>
@@ -477,7 +445,7 @@ export async function adminDashboard(env) {
         </div>
       </div>
 
-      <!-- Overview Tab - 完全还原原有统计面板 -->
+      <!-- Overview Tab -->
       <div id="overview-tab" class="tab-content active">
         <div class="grid grid-3" style="margin-bottom: 2rem;">
           <div class="stat-card">
@@ -513,7 +481,7 @@ export async function adminDashboard(env) {
         </div>
       </div>
 
-      <!-- Products Tab - 完全还原原有产品管理 -->
+      <!-- Products Tab -->
       <div id="products-tab" class="tab-content">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
           <h2 style="font-size: 1.25rem; color: var(--text-dark);">Manage Products</h2>
@@ -524,7 +492,7 @@ export async function adminDashboard(env) {
         </div>
       </div>
 
-      <!-- Inquiries Tab - 完全还原原有询盘管理 -->
+      <!-- Inquiries Tab -->
       <div id="inquiries-tab" class="tab-content">
         <h2 style="font-size: 1.25rem; margin-bottom: 1.5rem; color: var(--text-dark);">Manage Inquiries</h2>
         <div class="table-container">
@@ -532,26 +500,23 @@ export async function adminDashboard(env) {
         </div>
       </div>
 
-      <!-- Settings Tab - 修复排版，拆分两个独立卡片 -->
+      <!-- Settings Tab -->
       <div id="settings-tab" class="tab-content">
         <h2 style="font-size: 1.25rem; margin-bottom: 1.5rem; color: var(--text-dark);">Website Settings</h2>
         
-        <div class="settings-cards-wrapper">
-          <!-- 原有网站设置卡片 - 新增欢迎标题配置项 -->
-          <div class="settings-card">
+        <!-- 分为两列布局，或者两个卡片 -->
+        <div style="display: grid; gap: 2rem; grid-template-columns: 1fr;">
+          
+          <!-- 原有网站设置卡片 -->
+          <div style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
             <form id="settings-form">
-              <h3>Basic Information</h3>
+              <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
+                Basic Information
+              </h3>
 
               <div class="form-group">
                 <label class="form-label" for="settings-site-name">Website Name</label>
                 <input type="text" id="settings-site-name" name="site_name" class="form-input" placeholder="GlobalMart">
-              </div>
-
-              <!-- 新增：首页欢迎标题配置项 -->
-              <div class="form-group">
-                <label class="form-label" for="settings-welcome-title">Homepage Welcome Title</label>
-                <input type="text" id="settings-welcome-title" name="welcome_title" class="form-input" placeholder="Welcome to Our B2B Product Exhibition">
-                <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.25rem;">首页顶部主标题，修改后实时生效</p>
               </div>
 
               <div class="form-group">
@@ -564,7 +529,9 @@ export async function adminDashboard(env) {
                 <textarea id="settings-company-intro" name="company_intro" class="form-textarea" placeholder="We are a leading manufacturer and supplier..."></textarea>
               </div>
 
-              <h3 style="margin-top: 2rem;">Contact Information</h3>
+              <h3 style="font-size: 1.1rem; margin: 2rem 0 1rem; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
+                Contact Information
+              </h3>
 
               <div class="form-group">
                 <label class="form-label" for="settings-email">Email</label>
@@ -581,7 +548,9 @@ export async function adminDashboard(env) {
                 <input type="text" id="settings-address" name="address" class="form-input" placeholder="123 Business St, City, Country">
               </div>
 
-              <h3 style="margin-top: 2rem;">Social Media Links</h3>
+              <h3 style="font-size: 1.1rem; margin: 2rem 0 1rem; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
+                Social Media Links
+              </h3>
 
               <div class="form-group">
                 <label class="form-label" for="settings-linkedin">LinkedIn URL</label>
@@ -605,36 +574,41 @@ export async function adminDashboard(env) {
             </form>
           </div>
 
-          <!-- 新增：修改密码独立卡片 -->
-          <div class="settings-card" style="border-top: 4px solid var(--primary-color);">
-            <h3>🔐 Change Login Password</h3>
+          <!-- --- 新增代码 START: 修改密码卡片 --- -->
+          <div style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-top: 4px solid var(--primary-color);">
+            <h3 style="font-size: 1.1rem; margin-bottom: 1.5rem; color: var(--text-dark); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
+              🔐 Change Password
+            </h3>
             <form id="change-password-form">
               <div class="form-group">
                 <label class="form-label" for="old-password">Current Password</label>
-                <input type="password" id="old-password" class="form-input" required placeholder="请输入当前登录密码">
+                <input type="password" id="old-password" class="form-input" required placeholder="Enter your current password">
               </div>
 
               <div class="form-group">
                 <label class="form-label" for="new-password">New Password</label>
-                <input type="password" id="new-password" class="form-input" required minlength="6" placeholder="至少6位字符">
+                <input type="password" id="new-password" class="form-input" required minlength="6" placeholder="At least 6 characters">
               </div>
 
               <div class="form-group">
                 <label class="form-label" for="confirm-new-password">Confirm New Password</label>
-                <input type="password" id="confirm-new-password" class="form-input" required minlength="6" placeholder="再次输入新密码">
+                <input type="password" id="confirm-new-password" class="form-input" required minlength="6" placeholder="Re-enter your new password">
               </div>
 
-              <div id="password-message"></div>
+              <div id="password-message" style="margin-bottom: 1rem; min-height: 20px;"></div>
 
-              <button type="submit" id="update-password-btn" class="btn btn-primary">Update Password</button>
+              <div>
+                <button type="submit" id="update-password-btn" class="btn btn-primary">Update Password</button>
+              </div>
             </form>
           </div>
+          <!-- --- 新增代码 END --- -->
         </div>
       </div>
     </main>
   </div>
 
-  <!-- Product Edit/Add Modal - 完全还原原有产品模态框 -->
+  <!-- Product Edit/Add Modal -->
   <div id="product-modal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -710,7 +684,6 @@ export async function adminDashboard(env) {
     /**
      * Main JavaScript file for B2B Website
      * Handles common functionality across all pages
-     * 完全还原原有通用逻辑
      */
 
     // Mobile menu toggle
@@ -861,7 +834,6 @@ export async function adminDashboard(env) {
     /**
      * Admin Dashboard JavaScript
      * Handles all admin dashboard functionality
-     * 完全还原原有管理逻辑 + 新增修改密码逻辑
      */
 
     // Check authentication
@@ -1321,6 +1293,7 @@ Message: \${inquiry.message}
 Status: \${inquiry.status}
 Date: \${new Date(inquiry.created_at).toLocaleString()}
           \`);
+          // TODO: Implement better inquiry viewing modal
         }
       } catch (error) {
         showNotification('Error loading inquiry details', 'error');
@@ -1349,7 +1322,7 @@ Date: \${new Date(inquiry.created_at).toLocaleString()}
         if (response.success) {
           const settings = response.data;
 
-          // 原有字段填充
+          // Populate form fields
           document.getElementById('settings-site-name').value = settings.site_name || '';
           document.getElementById('settings-site-description').value = settings.site_description || '';
           document.getElementById('settings-company-intro').value = settings.company_intro || '';
@@ -1359,9 +1332,6 @@ Date: \${new Date(inquiry.created_at).toLocaleString()}
           document.getElementById('settings-linkedin').value = settings.linkedin || '';
           document.getElementById('settings-facebook').value = settings.facebook || '';
           document.getElementById('settings-twitter').value = settings.twitter || '';
-          
-          // 新增：欢迎标题填充
-          document.getElementById('settings-welcome-title').value = settings.welcome_title || '';
         }
       } catch (error) {
         console.error('Error loading settings:', error);
@@ -1390,16 +1360,6 @@ Date: \${new Date(inquiry.created_at).toLocaleString()}
           input.style.backgroundColor = '#f3f4f6';
         });
       }
-
-      // 禁用修改密码功能
-      const changePwdForm = document.getElementById('change-password-form');
-      if (changePwdForm) {
-        changePwdForm.querySelectorAll('input, button').forEach(el => {
-          el.disabled = true;
-          el.style.opacity = '0.5';
-          el.style.cursor = 'not-allowed';
-        });
-      }
     }
 
     // Handle settings form submission
@@ -1414,7 +1374,6 @@ Date: \${new Date(inquiry.created_at).toLocaleString()}
 
       const formData = {
         site_name: document.getElementById('settings-site-name').value,
-        welcome_title: document.getElementById('settings-welcome-title').value, // 新增欢迎标题
         site_description: document.getElementById('settings-site-description').value,
         company_intro: document.getElementById('settings-company-intro').value,
         email: document.getElementById('settings-email').value,
@@ -1438,7 +1397,7 @@ Date: \${new Date(inquiry.created_at).toLocaleString()}
       }
     });
 
-    // 新增：修改密码表单提交逻辑
+    // --- 新增代码 START: 修改密码逻辑 ---
     const changePasswordForm = document.getElementById('change-password-form');
     const passwordMessageDiv = document.getElementById('password-message');
 
@@ -1449,9 +1408,8 @@ Date: \${new Date(inquiry.created_at).toLocaleString()}
         const oldPassword = document.getElementById('old-password').value;
         const newPassword = document.getElementById('new-password').value;
         const confirmNewPassword = document.getElementById('confirm-new-password').value;
-        const submitBtn = document.getElementById('update-password-btn');
 
-        // 前端校验
+        // 1. 前端简单校验
         if (newPassword !== confirmNewPassword) {
           passwordMessageDiv.textContent = '❌ 两次输入的新密码不一致';
           passwordMessageDiv.style.color = '#ef4444';
@@ -1464,13 +1422,15 @@ Date: \${new Date(inquiry.created_at).toLocaleString()}
           return;
         }
 
-        // 加载状态
-        passwordMessageDiv.textContent = 'Updating password...';
+        // 清空消息，禁用按钮
+        passwordMessageDiv.textContent = 'Updating...';
         passwordMessageDiv.style.color = '#6b7280';
-        submitBtn.disabled = true;
+        const btn = document.getElementById('update-password-btn');
+        btn.disabled = true;
 
         try {
-          // 发送修改密码请求
+          // 2. 发送请求
+          // 注意：这里直接用 fetch 以确保完全控制响应状态码的读取
           const response = await fetch('/api/admin/change-password', {
             method: 'PUT',
             headers: {
@@ -1480,18 +1440,43 @@ Date: \${new Date(inquiry.created_at).toLocaleString()}
             body: JSON.stringify({ oldPassword, newPassword })
           });
 
-          const result = await response.json();
+          const result = await response.json(); // 尝试解析 JSON
 
           if (response.ok) {
             // 成功
-            passwordMessageDiv.textContent = '✅ 密码修改成功！即将跳转到登录页...';
+            passwordMessageDiv.textContent = '✅ Password changed successfully! Please log in again.';
             passwordMessageDiv.style.color = '#10b981';
             changePasswordForm.reset();
             
-            // 2秒后退出登录
+            // 可选：3秒后强制退出登录
             setTimeout(() => {
               logout();
             }, 2000);
           } else {
-            // 失败
-            passwordMessageDiv.textContent =
+            // 失败（API返回了错误信息）
+            passwordMessageDiv.textContent = \`❌ Error: \${result.error || result.message || 'Unknown error'}\`;
+            passwordMessageDiv.style.color = '#ef4444';
+          }
+        } catch (err) {
+          // 网络错误
+          passwordMessageDiv.textContent = '❌ Network error, please try again.';
+          passwordMessageDiv.style.color = '#ef4444';
+        } finally {
+          btn.disabled = false;
+        }
+      });
+    }
+    // --- 新增代码 END ---
+
+    // Initialize dashboard
+    loadDashboardStats();
+  </script>
+</body>
+</html>`;
+
+  return new Response(html, {
+    headers: {
+      'Content-Type': 'text/html;charset=UTF-8',
+    },
+  });
+}
