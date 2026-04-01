@@ -5,7 +5,10 @@
 
 import { hashPassword, verifyPassword, generateToken, verifyToken } from '../../utils/auth';
 
-const JWT_SECRET = 'your-secret-key-change-this-in-production'; // TODO: Move to environment variable
+// 优先使用环境变量，如果没有则使用默认值（仅用于开发）
+const JWT_SECRET = typeof process !== 'undefined' && process.env.JWT_SECRET 
+  ? process.env.JWT_SECRET 
+  : 'your-secret-key-change-this-in-production';
 
 export async function handleAdmin(request, env, corsHeaders) {
   const url = new URL(request.url);
@@ -30,6 +33,11 @@ export async function handleAdmin(request, env, corsHeaders) {
   // GET /api/admin/stats - Get dashboard statistics (Admin only)
   if (method === 'GET' && pathParts[2] === 'stats') {
     return getDashboardStats(request, env, corsHeaders);
+  }
+
+  // PUT /api/admin/change-password - 修改当前登录用户密码 (新增)
+  if (method === 'PUT' && pathParts[2] === 'change-password') {
+    return changePassword(request, env, corsHeaders);
   }
 
   return new Response(JSON.stringify({ error: 'Not found' }), {
@@ -82,13 +90,16 @@ async function adminLogin(request, env, corsHeaders) {
       'UPDATE admins SET last_login = CURRENT_TIMESTAMP WHERE id = ?'
     ).bind(admin.id).run();
 
+    // Determine the correct secret source
+    const secret = env.JWT_SECRET || JWT_SECRET;
+
     // Generate JWT token
     const token = await generateToken({
       id: admin.id,
       username: admin.username,
       role: admin.role,
       exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60), // 24 hours
-    }, JWT_SECRET);
+    }, secret);
 
     return new Response(JSON.stringify({
       success: true,
@@ -127,7 +138,8 @@ async function verifyAdminToken(request, env, corsHeaders) {
       });
     }
 
-    const payload = await verifyToken(token, JWT_SECRET);
+    const secret = env.JWT_SECRET || JWT_SECRET;
+    const payload = await verifyToken(token, secret);
 
     if (!payload) {
       return new Response(JSON.stringify({
@@ -180,7 +192,14 @@ async function adminLogout(request, env, corsHeaders) {
 // Get dashboard statistics
 async function getDashboardStats(request, env, corsHeaders) {
   try {
-    // TODO: Add authentication check
+    // 检查身份认证
+    const admin = await requireAuth(request, env);
+    if (!admin) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     // Get total products
     const { total_products } = await env.DB.prepare(
@@ -225,6 +244,78 @@ async function getDashboardStats(request, env, corsHeaders) {
   }
 }
 
+/**
+ * 修改密码 API (整合版)
+ */
+async function changePassword(request, env, corsHeaders) {
+  try {
+    // 1. 验证身份 (复用现有的 requireAuth)
+    const admin = await requireAuth(request, env);
+    if (!admin) {
+      return new Response(JSON.stringify({ error: '未授权，请重新登录' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // 2. 解析请求体
+    const { oldPassword, newPassword } = await request.json();
+    if (!oldPassword || !newPassword) {
+      return new Response(JSON.stringify({ error: '旧密码和新密码不能为空' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    if (newPassword.length < 6) {
+      return new Response(JSON.stringify({ error: '新密码长度至少6位' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // 3. 查询当前用户完整信息 (用于验证旧密码)
+    const currentAdmin = await env.DB.prepare(
+      'SELECT password_hash FROM admins WHERE id = ?'
+    ).bind(admin.id).first();
+
+    if (!currentAdmin) {
+      return new Response(JSON.stringify({ error: '用户不存在' }), {
+        status: 404,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // 4. 验证旧密码是否正确 (复用 utils/auth 里的 verifyPassword)
+    // 注意：这里假设 verifyPassword 是比较明文和哈希的函数
+    const isValid = await verifyPassword(oldPassword, currentAdmin.password_hash);
+    if (!isValid) {
+      return new Response(JSON.stringify({ error: '旧密码错误' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // 5. 生成新密码哈希并更新 (复用 utils/auth 里的 hashPassword)
+    const newPasswordHash = await hashPassword(newPassword);
+    await env.DB.prepare(
+      'UPDATE admins SET password_hash = ? WHERE id = ?'
+    ).bind(newPasswordHash, admin.id).run();
+
+    return new Response(JSON.stringify({
+      success: true,
+      message: '密码修改成功，请使用新密码重新登录'
+    }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    console.error('Change password error:', error);
+    return new Response(JSON.stringify({ error: '服务器内部错误' }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+}
+
 // Helper function to check authentication
 export async function requireAuth(request, env) {
   const authHeader = request.headers.get('Authorization');
@@ -234,7 +325,8 @@ export async function requireAuth(request, env) {
   }
 
   const token = authHeader.substring(7);
-  const payload = await verifyToken(token, JWT_SECRET);
+  const secret = env.JWT_SECRET || JWT_SECRET;
+  const payload = await verifyToken(token, secret);
 
   if (!payload) {
     return null;
