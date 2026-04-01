@@ -27,7 +27,7 @@ export async function homePage(env) {
     <!-- Hero Section -->
     <section class="hero">
       <div class="container">
-        <h1>Welcome to Hydroservo Intelligent Equipment Co., Ltd. | Your Trusted Partner for Premium Hydraulic & Servo Solutions</h1>
+        <h1>Welcome to HydraServo Intelligent Equipment Co., Ltd.</h1>
         <p id="hero-subtitle">Your trusted partner for high-quality industrial products and innovative solutions worldwide</p>
         <div style="margin-top: 2rem;">
           <a href="/products" class="btn btn-primary hide-on-mobile" style="margin-right: 1rem;">Browse Products</a>
