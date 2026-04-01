@@ -503,6 +503,37 @@ export async function adminDashboard(env) {
       <!-- Settings Tab -->
       <div id="settings-tab" class="tab-content">
         <h2 style="font-size: 1.25rem; margin-bottom: 1.5rem; color: var(--text-dark);">Website Settings</h2>
+<h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
+  Account Settings
+</h3>
+
+<div class="form-group">
+  <label class="form-label" for="profileUsername">New Username</label>
+  <input type="text" id="profileUsername" class="form-input" placeholder="Enter new username">
+</div>
+
+<div class="form-group">
+  <label class="form-label" for="profileEmail">Email</label>
+  <input type="email" id="profileEmail" class="form-input" placeholder="Enter email">
+</div>
+
+<div class="form-group" style="margin-bottom: 2rem;">
+  <button type="button" class="btn btn-primary" onclick="updateProfile()">Save Profile</button>
+</div>
+
+<div class="form-group">
+  <label class="form-label" for="currentPassword">Current Password</label>
+  <input type="password" id="currentPassword" class="form-input" placeholder="Enter current password">
+</div>
+
+<div class="form-group">
+  <label class="form-label" for="newPassword">New Password</label>
+  <input type="password" id="newPassword" class="form-input" placeholder="Enter new password">
+</div>
+
+<div class="form-group" style="margin-bottom: 2rem;">
+  <button type="button" class="btn btn-warning" onclick="updatePassword()">Change Password</button>
+</div>
         <div style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); max-width: 800px;">
           <form id="settings-form">
             <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
@@ -1363,6 +1394,84 @@ Date: \${new Date(inquiry.created_at).toLocaleString()}
 
     // Initialize dashboard
     loadDashboardStats();
+      async function updateProfile() {
+  const username = document.getElementById('profileUsername').value.trim();
+  const email = document.getElementById('profileEmail').value.trim();
+  const token = localStorage.getItem('admin_token');
+
+  if (!username) {
+    alert('Please enter a new username');
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/admin/profile', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        username,
+        email
+      })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || 'Failed to update profile');
+    }
+
+    alert('Profile updated successfully. Please log in again.');
+    localStorage.removeItem('admin_token');
+    window.location.href = '/admin';
+  } catch (error) {
+    alert(error.message || 'Failed to update profile');
+  }
+}
+
+async function updatePassword() {
+  const currentPassword = document.getElementById('currentPassword').value.trim();
+  const newPassword = document.getElementById('newPassword').value.trim();
+  const token = localStorage.getItem('admin_token');
+
+  if (!currentPassword || !newPassword) {
+    alert('Please enter both current password and new password');
+    return;
+  }
+
+  if (newPassword.length < 6) {
+    alert('New password must be at least 6 characters long');
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/admin/password', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        currentPassword,
+        newPassword
+      })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || 'Failed to update password');
+    }
+
+    alert('Password updated successfully. Please log in again.');
+    localStorage.removeItem('admin_token');
+    window.location.href = '/admin';
+  } catch (error) {
+    alert(error.message || 'Failed to update password');
+  }
+}
   </script>
 </body>
 </html>`;
