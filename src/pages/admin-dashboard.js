@@ -503,70 +503,106 @@ export async function adminDashboard(env) {
       <!-- Settings Tab -->
       <div id="settings-tab" class="tab-content">
         <h2 style="font-size: 1.25rem; margin-bottom: 1.5rem; color: var(--text-dark);">Website Settings</h2>
-        <div style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); max-width: 800px;">
-          <form id="settings-form">
-            <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
-              Basic Information
+        
+        <!-- 分为两列布局，或者两个卡片 -->
+        <div style="display: grid; gap: 2rem; grid-template-columns: 1fr;">
+          
+          <!-- 原有网站设置卡片 -->
+          <div style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <form id="settings-form">
+              <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
+                Basic Information
+              </h3>
+
+              <div class="form-group">
+                <label class="form-label" for="settings-site-name">Website Name</label>
+                <input type="text" id="settings-site-name" name="site_name" class="form-input" placeholder="GlobalMart">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="settings-site-description">Website Description</label>
+                <textarea id="settings-site-description" name="site_description" class="form-textarea" placeholder="Your trusted partner for high-quality industrial products..."></textarea>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="settings-company-intro">Company Introduction</label>
+                <textarea id="settings-company-intro" name="company_intro" class="form-textarea" placeholder="We are a leading manufacturer and supplier..."></textarea>
+              </div>
+
+              <h3 style="font-size: 1.1rem; margin: 2rem 0 1rem; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
+                Contact Information
+              </h3>
+
+              <div class="form-group">
+                <label class="form-label" for="settings-email">Email</label>
+                <input type="email" id="settings-email" name="email" class="form-input" placeholder="info@example.com">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="settings-phone">Phone</label>
+                <input type="text" id="settings-phone" name="phone" class="form-input" placeholder="+1 234 567 8900">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="settings-address">Address</label>
+                <input type="text" id="settings-address" name="address" class="form-input" placeholder="123 Business St, City, Country">
+              </div>
+
+              <h3 style="font-size: 1.1rem; margin: 2rem 0 1rem; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
+                Social Media Links
+              </h3>
+
+              <div class="form-group">
+                <label class="form-label" for="settings-linkedin">LinkedIn URL</label>
+                <input type="url" id="settings-linkedin" name="linkedin" class="form-input" placeholder="https://linkedin.com/company/yourcompany">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="settings-facebook">Facebook URL</label>
+                <input type="url" id="settings-facebook" name="facebook" class="form-input" placeholder="https://facebook.com/yourcompany">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="settings-twitter">Twitter URL</label>
+                <input type="url" id="settings-twitter" name="twitter" class="form-input" placeholder="https://twitter.com/yourcompany">
+              </div>
+
+              <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                <button type="submit" id="save-settings-btn" class="btn btn-primary" style="margin-right: 1rem;">Save Settings</button>
+                <button type="button" class="btn btn-secondary" onclick="loadSettings()">Reset</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- --- 新增代码 START: 修改密码卡片 --- -->
+          <div style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-top: 4px solid var(--primary-color);">
+            <h3 style="font-size: 1.1rem; margin-bottom: 1.5rem; color: var(--text-dark); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
+              🔐 Change Password
             </h3>
+            <form id="change-password-form">
+              <div class="form-group">
+                <label class="form-label" for="old-password">Current Password</label>
+                <input type="password" id="old-password" class="form-input" required placeholder="Enter your current password">
+              </div>
 
-            <div class="form-group">
-              <label class="form-label" for="settings-site-name">Website Name</label>
-              <input type="text" id="settings-site-name" name="site_name" class="form-input" placeholder="GlobalMart">
-            </div>
+              <div class="form-group">
+                <label class="form-label" for="new-password">New Password</label>
+                <input type="password" id="new-password" class="form-input" required minlength="6" placeholder="At least 6 characters">
+              </div>
 
-            <div class="form-group">
-              <label class="form-label" for="settings-site-description">Website Description</label>
-              <textarea id="settings-site-description" name="site_description" class="form-textarea" placeholder="Your trusted partner for high-quality industrial products..."></textarea>
-            </div>
+              <div class="form-group">
+                <label class="form-label" for="confirm-new-password">Confirm New Password</label>
+                <input type="password" id="confirm-new-password" class="form-input" required minlength="6" placeholder="Re-enter your new password">
+              </div>
 
-            <div class="form-group">
-              <label class="form-label" for="settings-company-intro">Company Introduction</label>
-              <textarea id="settings-company-intro" name="company_intro" class="form-textarea" placeholder="We are a leading manufacturer and supplier..."></textarea>
-            </div>
+              <div id="password-message" style="margin-bottom: 1rem; min-height: 20px;"></div>
 
-            <h3 style="font-size: 1.1rem; margin: 2rem 0 1rem; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
-              Contact Information
-            </h3>
-
-            <div class="form-group">
-              <label class="form-label" for="settings-email">Email</label>
-              <input type="email" id="settings-email" name="email" class="form-input" placeholder="info@example.com">
-            </div>
-
-            <div class="form-group">
-              <label class="form-label" for="settings-phone">Phone</label>
-              <input type="text" id="settings-phone" name="phone" class="form-input" placeholder="+1 234 567 8900">
-            </div>
-
-            <div class="form-group">
-              <label class="form-label" for="settings-address">Address</label>
-              <input type="text" id="settings-address" name="address" class="form-input" placeholder="123 Business St, City, Country">
-            </div>
-
-            <h3 style="font-size: 1.1rem; margin: 2rem 0 1rem; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
-              Social Media Links
-            </h3>
-
-            <div class="form-group">
-              <label class="form-label" for="settings-linkedin">LinkedIn URL</label>
-              <input type="url" id="settings-linkedin" name="linkedin" class="form-input" placeholder="https://linkedin.com/company/yourcompany">
-            </div>
-
-            <div class="form-group">
-              <label class="form-label" for="settings-facebook">Facebook URL</label>
-              <input type="url" id="settings-facebook" name="facebook" class="form-input" placeholder="https://facebook.com/yourcompany">
-            </div>
-
-            <div class="form-group">
-              <label class="form-label" for="settings-twitter">Twitter URL</label>
-              <input type="url" id="settings-twitter" name="twitter" class="form-input" placeholder="https://twitter.com/yourcompany">
-            </div>
-
-            <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
-              <button type="submit" id="save-settings-btn" class="btn btn-primary" style="margin-right: 1rem;">Save Settings</button>
-              <button type="button" class="btn btn-secondary" onclick="loadSettings()">Reset</button>
-            </div>
-          </form>
+              <div>
+                <button type="submit" id="update-password-btn" class="btn btn-primary">Update Password</button>
+              </div>
+            </form>
+          </div>
+          <!-- --- 新增代码 END --- -->
         </div>
       </div>
     </main>
@@ -1360,6 +1396,77 @@ Date: \${new Date(inquiry.created_at).toLocaleString()}
         showNotification('Error saving settings', 'error');
       }
     });
+
+    // --- 新增代码 START: 修改密码逻辑 ---
+    const changePasswordForm = document.getElementById('change-password-form');
+    const passwordMessageDiv = document.getElementById('password-message');
+
+    if (changePasswordForm) {
+      changePasswordForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const oldPassword = document.getElementById('old-password').value;
+        const newPassword = document.getElementById('new-password').value;
+        const confirmNewPassword = document.getElementById('confirm-new-password').value;
+
+        // 1. 前端简单校验
+        if (newPassword !== confirmNewPassword) {
+          passwordMessageDiv.textContent = '❌ 两次输入的新密码不一致';
+          passwordMessageDiv.style.color = '#ef4444';
+          return;
+        }
+
+        if (newPassword.length < 6) {
+          passwordMessageDiv.textContent = '❌ 新密码长度至少为6位';
+          passwordMessageDiv.style.color = '#ef4444';
+          return;
+        }
+
+        // 清空消息，禁用按钮
+        passwordMessageDiv.textContent = 'Updating...';
+        passwordMessageDiv.style.color = '#6b7280';
+        const btn = document.getElementById('update-password-btn');
+        btn.disabled = true;
+
+        try {
+          // 2. 发送请求
+          // 注意：这里直接用 fetch 以确保完全控制响应状态码的读取
+          const response = await fetch('/api/admin/change-password', {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': \`Bearer \${token}\`,
+            },
+            body: JSON.stringify({ oldPassword, newPassword })
+          });
+
+          const result = await response.json(); // 尝试解析 JSON
+
+          if (response.ok) {
+            // 成功
+            passwordMessageDiv.textContent = '✅ Password changed successfully! Please log in again.';
+            passwordMessageDiv.style.color = '#10b981';
+            changePasswordForm.reset();
+            
+            // 可选：3秒后强制退出登录
+            setTimeout(() => {
+              logout();
+            }, 2000);
+          } else {
+            // 失败（API返回了错误信息）
+            passwordMessageDiv.textContent = \`❌ Error: \${result.error || result.message || 'Unknown error'}\`;
+            passwordMessageDiv.style.color = '#ef4444';
+          }
+        } catch (err) {
+          // 网络错误
+          passwordMessageDiv.textContent = '❌ Network error, please try again.';
+          passwordMessageDiv.style.color = '#ef4444';
+        } finally {
+          btn.disabled = false;
+        }
+      });
+    }
+    // --- 新增代码 END ---
 
     // Initialize dashboard
     loadDashboardStats();
