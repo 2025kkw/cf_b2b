@@ -535,6 +535,37 @@ export async function adminDashboard(env) {
   <button type="button" class="btn btn-warning" onclick="updatePassword()">Change Password</button>
 </div>
         <div style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); max-width: 800px;">
+        <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
+  Account Settings
+</h3>
+
+<div class="form-group">
+  <label class="form-label" for="profileUsername">New Username</label>
+  <input type="text" id="profileUsername" class="form-input" placeholder="Enter new username">
+</div>
+
+<div class="form-group">
+  <label class="form-label" for="profileEmail">Email</label>
+  <input type="email" id="profileEmail" class="form-input" placeholder="Enter email">
+</div>
+
+<div class="form-group" style="margin-bottom: 2rem;">
+  <button type="button" class="btn btn-primary" onclick="updateProfile()">Save Profile</button>
+</div>
+
+<div class="form-group">
+  <label class="form-label" for="currentPassword">Current Password</label>
+  <input type="password" id="currentPassword" class="form-input" placeholder="Enter current password">
+</div>
+
+<div class="form-group">
+  <label class="form-label" for="newPassword">New Password</label>
+  <input type="password" id="newPassword" class="form-input" placeholder="Enter new password">
+</div>
+
+<div class="form-group" style="margin-bottom: 2rem;">
+  <button type="button" class="btn btn-warning" onclick="updatePassword()">Change Password</button>
+</div>
           <form id="settings-form">
             <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
               Basic Information
