@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS products (
   detailed_description TEXT,
   specifications TEXT,
   image_url TEXT,
-  gallery_images TEXT, -- JSON array of image URLs
+  gallery_images TEXT,
   category TEXT,
   is_featured BOOLEAN DEFAULT 0,
   is_active BOOLEAN DEFAULT 1,
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS inquiries (
   phone TEXT,
   country TEXT,
   message TEXT NOT NULL,
-  status TEXT DEFAULT 'pending', -- pending, processing, completed
+  status TEXT DEFAULT 'pending',
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (product_id) REFERENCES products(id)
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS admins (
   username TEXT UNIQUE NOT NULL,
   password_hash TEXT NOT NULL,
   email TEXT,
-  role TEXT DEFAULT 'admin', -- super_admin, admin
+  role TEXT DEFAULT 'admin',
   last_login DATETIME,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -49,7 +49,6 @@ CREATE INDEX IF NOT EXISTS idx_products_category ON products(category);
 CREATE INDEX IF NOT EXISTS idx_products_featured ON products(is_featured);
 CREATE INDEX IF NOT EXISTS idx_inquiries_status ON inquiries(status);
 CREATE INDEX IF NOT EXISTS idx_inquiries_product ON inquiries(product_id);
-
 
 INSERT OR IGNORE INTO admins (username, password_hash, email, role)
 VALUES
