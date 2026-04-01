@@ -61,9 +61,13 @@ export async function homePage(env) {
 </body>
 </html>`;
 
+    // ... (前面是 HTML 模板字符串) ...
   return new Response(html, {
     headers: {
       'Content-Type': 'text/html;charset=UTF-8',
     },
   });
 }
+
+// 👇 必须确保有这一行！这是最容易丢失的部分
+export { adminDashboard };
