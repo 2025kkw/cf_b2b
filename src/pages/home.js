@@ -1,6 +1,6 @@
 /**
  * Home Page
- * Mobile Features Grid Fixed (2x2 Layout)
+ * Hero Section Mobile Width Fixed, Spelling Corrected, Line Break Optimized
  */
 
 import { createLayout } from './layout';
@@ -24,11 +24,11 @@ export async function homePage(env) {
   }
 
   const content = `
-    <!-- Hero Section -->
+    <!-- Hero Section - Mobile Width Fully Optimized -->
     <section class="hero">
-      <div class="container">
+      <div class="hero-container">
         <h1>Welcome to HydraServo Intelligent Equipment Co., Ltd.</h1>
-        <p id="hero-subtitle">Professional Manufacturer of Hydraulic Servo Systems & Intelligent Fluid Power Solutions</p>
+        <p id="hero-subtitle">Your trusted partner for high-quality industrial products and innovative solutions worldwide</p>
         <div class="hero-buttons">
           <a href="/products" class="btn btn-primary">Browse Products</a>
           <a href="/contact" class="btn btn-secondary">Contact Us</a>
@@ -58,7 +58,7 @@ export async function homePage(env) {
       </div>
     </section>
 
-    <!-- Company Features - Mobile 2x2 Grid Fixed -->
+    <!-- Company Features - 2x2 Mobile Layout -->
     <section class="container section-spacing">
       <h2 style="text-align: center; font-size: 2rem; margin-bottom: 2rem; color: var(--primary-color);">Why Choose HydraServo</h2>
       <div class="features-grid">
@@ -101,33 +101,84 @@ export async function homePage(env) {
       </div>
     </section>
 
-    <!-- Optimized Styles -->
+    <!-- Core Optimization Styles -->
     <style>
-      /* Hero Section */
-      .hero h1 {
-        font-size: clamp(1.5rem, 5vw, 3rem) !important;
-        line-height: 1.3 !important;
-        margin-bottom: 1rem !important;
+      /* --- 核心修复：Hero区域拉宽、减少换行 --- */
+      .hero {
+        padding: 4rem 0;
       }
-      .hero p {
-        font-size: clamp(0.95rem, 3vw, 1.25rem) !important;
-        line-height: 1.6 !important;
-        margin-bottom: 1.5rem !important;
-      }
-      .hero-buttons {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        align-items: center;
-      }
-      .hero-buttons .btn {
+      .hero-container {
         width: 100%;
-        max-width: 260px;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 1rem; /* 手机端左右仅留1rem边距，最大化文字宽度 */
         text-align: center;
-        padding: 0.875rem 1.5rem;
       }
 
-      /* General Spacing */
+      /* 标题优化：强制不拆分单词、自动适配字号、减少换行 */
+      .hero h1 {
+        font-size: clamp(1.4rem, 5.5vw, 3rem) !important; /* 手机端自动缩小，电脑端放大 */
+        line-height: 1.35 !important;
+        margin-bottom: 1.25rem !important;
+        word-wrap: normal;
+        word-break: keep-all; /* 禁止拆分单词，整词换行 */
+        white-space: normal;
+        width: 100%;
+        letter-spacing: -0.02em; /* 稍微收紧字母，减少换行次数 */
+      }
+
+      /* 副标题优化 */
+      .hero p {
+        font-size: clamp(1rem, 3.5vw, 1.25rem) !important;
+        line-height: 1.6 !important;
+        margin-bottom: 2rem !important;
+        word-wrap: normal;
+        word-break: keep-all;
+        max-width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      /* 按钮优化 */
+      .hero-buttons {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .hero-buttons .btn {
+        padding: 0.875rem 2rem;
+        font-size: 1.05rem;
+        min-width: 160px;
+        text-align: center;
+      }
+
+      /* 平板/手机端额外优化 */
+      @media (max-width: 768px) {
+        .hero {
+          padding: 3rem 0;
+        }
+        .hero-container {
+          padding: 0 0.75rem; /* 进一步缩小边距，拉宽文字 */
+        }
+        .hero h1 {
+          letter-spacing: -0.03em;
+        }
+        .hero p {
+          max-width: 100%;
+        }
+        .hero-buttons {
+          flex-direction: column;
+          width: 100%;
+        }
+        .hero-buttons .btn {
+          width: 100%;
+          max-width: 280px;
+        }
+      }
+
+      /* 其他区域通用优化 */
       .section-spacing {
         margin-top: 2.5rem !important;
         margin-bottom: 2.5rem !important;
@@ -135,10 +186,11 @@ export async function homePage(env) {
       }
       .intro-container {
         text-align: center;
-        max-width: 100%;
+        max-width: 900px;
+        margin: 0 auto;
       }
 
-      /* Product Grid */
+      /* 产品网格适配 */
       @media (max-width: 768px) {
         .grid-3 {
           grid-template-columns: 1fr 1fr !important;
@@ -148,47 +200,25 @@ export async function homePage(env) {
       }
       @media (max-width: 480px) {
         .grid-3 { grid-template-columns: 1fr !important; }
-        .hero-buttons .btn { max-width: 100%; }
       }
 
-      /* --- 核心修改：Features 2x2 网格布局 --- */
+      /* 优势区域2x2网格 */
       .features-grid {
         display: grid;
-        grid-template-columns: repeat(4, 1fr); /* 默认电脑端4列 */
+        grid-template-columns: repeat(4, 1fr);
         gap: 1.5rem;
       }
-
       @media (max-width: 900px) {
         .features-grid {
-          grid-template-columns: repeat(2, 1fr); /* 平板/手机端：强制2列 */
+          grid-template-columns: repeat(2, 1fr);
           gap: 1rem;
-        }
-        .features-grid .card {
-          margin-bottom: 0;
         }
         .features-grid .card-content {
           padding: 1.25rem;
         }
-        .features-grid .card-title {
-          font-size: 1rem !important;
-          margin-bottom: 0.5rem;
-        }
-        .features-grid .card-description {
-          font-size: 0.85rem !important;
-          line-height: 1.4;
-        }
       }
 
-      @media (max-width: 480px) {
-        .features-grid {
-          gap: 0.75rem;
-        }
-        .features-grid .card-content {
-          padding: 1rem;
-        }
-      }
-
-      /* Product Card Description */
+      /* 卡片描述文本限制 */
       .card-description {
         display: -webkit-box;
         -webkit-line-clamp: 3;
@@ -207,7 +237,6 @@ export async function homePage(env) {
         try {
           const response = await API.get('/products/featured');
           const products = response.data || [];
-
           const container = document.getElementById('featured-products');
 
           if (products.length === 0) {
