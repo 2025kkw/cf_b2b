@@ -188,7 +188,6 @@ export async function adminDashboard(env) {
 
           <p id="changePasswordMessage" style="margin-top:10px;"></p>
         </form>
-      </section>
 document.getElementById('changePasswordForm')?.addEventListener('submit', async (e) => {
   e.preventDefault();
 
@@ -224,7 +223,7 @@ document.getElementById('changePasswordForm')?.addEventListener('submit', async 
   messageEl.textContent = 'Password updated successfully';
   document.getElementById('changePasswordForm').reset();
 });
-
+      </section>
       <div id="editProductModal" class="modal">
         <div class="modal-content">
           <span class="close">&times;</span>
