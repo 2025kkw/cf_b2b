@@ -503,69 +503,40 @@ export async function adminDashboard(env) {
       <!-- Settings Tab -->
       <div id="settings-tab" class="tab-content">
         <h2 style="font-size: 1.25rem; margin-bottom: 1.5rem; color: var(--text-dark);">Website Settings</h2>
-<h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
-  Account Settings
-</h3>
-
-<div class="form-group">
-  <label class="form-label" for="profileUsername">New Username</label>
-  <input type="text" id="profileUsername" class="form-input" placeholder="Enter new username">
-</div>
-
-<div class="form-group">
-  <label class="form-label" for="profileEmail">Email</label>
-  <input type="email" id="profileEmail" class="form-input" placeholder="Enter email">
-</div>
-
-<div class="form-group" style="margin-bottom: 2rem;">
-  <button type="button" class="btn btn-primary" onclick="updateProfile()">Save Profile</button>
-</div>
-
-<div class="form-group">
-  <label class="form-label" for="currentPassword">Current Password</label>
-  <input type="password" id="currentPassword" class="form-input" placeholder="Enter current password">
-</div>
-
-<div class="form-group">
-  <label class="form-label" for="newPassword">New Password</label>
-  <input type="password" id="newPassword" class="form-input" placeholder="Enter new password">
-</div>
-
-<div class="form-group" style="margin-bottom: 2rem;">
-  <button type="button" class="btn btn-warning" onclick="updatePassword()">Change Password</button>
-</div>
         <div style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); max-width: 800px;">
-        <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
-  Account Settings
-</h3>
 
-<div class="form-group">
-  <label class="form-label" for="profileUsername">New Username</label>
-  <input type="text" id="profileUsername" class="form-input" placeholder="Enter new username">
-</div>
+          <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
+            Account Settings
+          </h3>
 
-<div class="form-group">
-  <label class="form-label" for="profileEmail">Email</label>
-  <input type="email" id="profileEmail" class="form-input" placeholder="Enter email">
-</div>
+          <div class="form-group">
+            <label class="form-label" for="profileUsername">New Username</label>
+            <input type="text" id="profileUsername" class="form-input" placeholder="Enter new username">
+          </div>
 
-<div class="form-group" style="margin-bottom: 2rem;">
-  <button type="button" class="btn btn-primary" onclick="updateProfile()">Save Profile</button>
-</div>
+          <div class="form-group">
+            <label class="form-label" for="profileEmail">Email</label>
+            <input type="email" id="profileEmail" class="form-input" placeholder="Enter email">
+          </div>
 
-<div class="form-group">
-  <label class="form-label" for="currentPassword">Current Password</label>
-  <input type="password" id="currentPassword" class="form-input" placeholder="Enter current password">
-</div>
+          <div class="form-group" style="margin-bottom: 2rem;">
+            <button type="button" class="btn btn-primary" onclick="updateProfile()">Save Profile</button>
+          </div>
 
-<div class="form-group">
-  <label class="form-label" for="newPassword">New Password</label>
-  <input type="password" id="newPassword" class="form-input" placeholder="Enter new password">
-</div>
+          <div class="form-group">
+            <label class="form-label" for="currentPassword">Current Password</label>
+            <input type="password" id="currentPassword" class="form-input" placeholder="Enter current password">
+          </div>
 
-<div class="form-group" style="margin-bottom: 2rem;">
-  <button type="button" class="btn btn-warning" onclick="updatePassword()">Change Password</button>
-</div>
+          <div class="form-group">
+            <label class="form-label" for="newPassword">New Password</label>
+            <input type="password" id="newPassword" class="form-input" placeholder="Enter new password">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 2rem;">
+            <button type="button" class="btn btn-secondary" onclick="updatePassword()">Change Password</button>
+          </div>
+
           <form id="settings-form">
             <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
               Basic Information
@@ -875,13 +846,27 @@ export async function adminDashboard(env) {
     API.post('/admin/verify', { token })
       .then(response => {
         if (response.success && response.data.user) {
-          // Update role in localStorage
           localStorage.setItem('admin_role', response.data.user.role || 'admin');
 
-          // Update role indicator
           const roleIndicator = document.getElementById('admin-role-indicator');
           if (roleIndicator) {
             roleIndicator.textContent = response.data.user.role === 'super_admin' ? 'Super Admin' : 'Admin';
+          }
+
+          const adminUsername = document.getElementById('admin-username');
+          if (adminUsername && response.data.user.username) {
+            adminUsername.textContent = response.data.user.username;
+          }
+
+          const profileUsername = document.getElementById('profileUsername');
+          const profileEmail = document.getElementById('profileEmail');
+
+          if (profileUsername) {
+            profileUsername.value = response.data.user.username || '';
+          }
+
+          if (profileEmail) {
+            profileEmail.value = response.data.user.email || '';
           }
         }
       })
@@ -892,15 +877,10 @@ export async function adminDashboard(env) {
       });
 
     // Add authorization header to all API requests
-    const originalPost = API.post;
-    const originalPut = API.put;
-    const originalDelete = API.delete;
-    const originalGet = API.get;
-
     API.get = function(endpoint) {
       return fetch(\`\${this.baseURL}\${endpoint}\`, {
         headers: {
-          'Authorization': \`Bearer \${token}\`,
+          'Authorization': 'Bearer ' + token,
         },
       }).then(res => res.json());
     };
@@ -910,7 +890,7 @@ export async function adminDashboard(env) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': \`Bearer \${token}\`,
+          'Authorization': 'Bearer ' + token,
         },
         body: JSON.stringify(data),
       }).then(res => res.json());
@@ -921,7 +901,7 @@ export async function adminDashboard(env) {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': \`Bearer \${token}\`,
+          'Authorization': 'Bearer ' + token,
         },
         body: JSON.stringify(data),
       }).then(res => res.json());
@@ -931,12 +911,11 @@ export async function adminDashboard(env) {
       return fetch(\`\${this.baseURL}\${endpoint}\`, {
         method: 'DELETE',
         headers: {
-          'Authorization': \`Bearer \${token}\`,
+          'Authorization': 'Bearer ' + token,
         },
       }).then(res => res.json());
     };
 
-    // Logout functionality
     function logout() {
       localStorage.removeItem('admin_token');
       localStorage.removeItem('admin_role');
@@ -950,7 +929,6 @@ export async function adminDashboard(env) {
 
     document.getElementById('logout-btn-header').addEventListener('click', logout);
 
-    // Tab Navigation
     const tabButtons = document.querySelectorAll('[data-tab]');
     const tabContents = document.querySelectorAll('.tab-content');
 
@@ -959,14 +937,12 @@ export async function adminDashboard(env) {
         e.preventDefault();
         const tabName = button.getAttribute('data-tab');
 
-        // Update active states
         tabButtons.forEach(btn => btn.classList.remove('active'));
         tabContents.forEach(content => content.classList.remove('active'));
 
         button.classList.add('active');
         document.getElementById(\`\${tabName}-tab\`).classList.add('active');
 
-        // Load data for specific tabs
         if (tabName === 'products') {
           loadProducts();
         } else if (tabName === 'inquiries') {
@@ -977,7 +953,6 @@ export async function adminDashboard(env) {
       });
     });
 
-    // Load Dashboard Stats
     async function loadDashboardStats() {
       try {
         const response = await API.get('/admin/stats');
@@ -988,7 +963,6 @@ export async function adminDashboard(env) {
           document.getElementById('stat-inquiries').textContent = total_inquiries || 0;
           document.getElementById('stat-pending').textContent = pending_inquiries || 0;
 
-          // Display recent inquiries
           const tbody = document.getElementById('recent-inquiries-tbody');
           if (recent_inquiries && recent_inquiries.length > 0) {
             tbody.innerHTML = recent_inquiries.map(inquiry => \`
@@ -1009,7 +983,6 @@ export async function adminDashboard(env) {
       }
     }
 
-    // Load Products
     async function loadProducts() {
       try {
         const response = await API.get('/products');
@@ -1060,7 +1033,6 @@ export async function adminDashboard(env) {
       }
     }
 
-    // Load Inquiries
     async function loadInquiries() {
       try {
         const response = await API.get('/inquiries');
@@ -1111,26 +1083,22 @@ export async function adminDashboard(env) {
       }
     }
 
-    // Product Management Functions
     window.handleImageUpload = async function(event) {
       const file = event.target.files[0];
       if (!file) return;
 
-      // Validate file type
       const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
       if (!allowedTypes.includes(file.type)) {
         showNotification('Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed.', 'error');
         return;
       }
 
-      // Validate file size (max 5MB)
       const maxSize = 5 * 1024 * 1024;
       if (file.size > maxSize) {
         showNotification('File too large. Maximum size is 5MB.', 'error');
         return;
       }
 
-      // Show uploading status
       const uploadStatus = document.getElementById('upload-status');
       uploadStatus.style.display = 'block';
 
@@ -1141,7 +1109,7 @@ export async function adminDashboard(env) {
         const response = await fetch('/api/upload/image', {
           method: 'POST',
           headers: {
-            'Authorization': \`Bearer \${token}\`,
+            'Authorization': 'Bearer ' + token,
           },
           body: formData,
         });
@@ -1149,10 +1117,8 @@ export async function adminDashboard(env) {
         const result = await response.json();
 
         if (result.success) {
-          // Set the image URL
           document.getElementById('product-image-url').value = result.data.url;
 
-          // Show preview
           const preview = document.getElementById('image-preview');
           preview.innerHTML = \`<img src="\${result.data.url}" alt="Product preview">\`;
 
@@ -1170,12 +1136,10 @@ export async function adminDashboard(env) {
 
     window.editProduct = async function(id) {
       try {
-        // Fetch product details
         const response = await API.get(\`/products/\${id}\`);
         if (response.success) {
           const product = response.data;
 
-          // Populate form
           document.getElementById('product-id').value = product.id;
           document.getElementById('product-name').value = product.name || '';
           document.getElementById('product-category').value = product.category || '';
@@ -1186,7 +1150,6 @@ export async function adminDashboard(env) {
           document.getElementById('product-is-featured').checked = product.is_featured === 1;
           document.getElementById('product-is-active').checked = product.is_active === 1;
 
-          // Show image preview if exists
           const preview = document.getElementById('image-preview');
           if (product.image_url) {
             preview.innerHTML = \`<img src="\${product.image_url}" alt="Product preview">\`;
@@ -1194,10 +1157,7 @@ export async function adminDashboard(env) {
             preview.innerHTML = '';
           }
 
-          // Update modal title
           document.getElementById('modal-title').textContent = 'Edit Product';
-
-          // Show modal
           document.getElementById('product-modal').classList.add('active');
         }
       } catch (error) {
@@ -1215,19 +1175,13 @@ export async function adminDashboard(env) {
     };
 
     window.openAddProductModal = function() {
-      // Reset form
       document.getElementById('product-form').reset();
       document.getElementById('product-id').value = '';
       document.getElementById('product-is-active').checked = true;
-
-      // Update modal title
       document.getElementById('modal-title').textContent = 'Add New Product';
-
-      // Show modal
       document.getElementById('product-modal').classList.add('active');
     };
 
-    // Handle product form submission
     document.getElementById('product-form').addEventListener('submit', async function(e) {
       e.preventDefault();
 
@@ -1246,10 +1200,8 @@ export async function adminDashboard(env) {
       try {
         let response;
         if (productId) {
-          // Update existing product
           response = await API.put(\`/products/\${productId}\`, formData);
         } else {
-          // Create new product
           response = await API.post('/products', formData);
         }
 
@@ -1267,7 +1219,6 @@ export async function adminDashboard(env) {
       }
     });
 
-    // Close modal when clicking outside
     document.getElementById('product-modal').addEventListener('click', function(e) {
       if (e.target === this) {
         closeProductModal();
@@ -1292,7 +1243,6 @@ export async function adminDashboard(env) {
       openAddProductModal();
     });
 
-    // Hide add product button for non-super admins
     if (!isSuperAdmin) {
       const addProductBtn = document.getElementById('add-product-btn');
       if (addProductBtn) {
@@ -1300,7 +1250,6 @@ export async function adminDashboard(env) {
       }
     }
 
-    // Inquiry Management Functions
     window.viewInquiry = async function(id) {
       try {
         const response = await API.get(\`/inquiries/\${id}\`);
@@ -1319,7 +1268,6 @@ Message: \${inquiry.message}
 Status: \${inquiry.status}
 Date: \${new Date(inquiry.created_at).toLocaleString()}
           \`);
-          // TODO: Implement better inquiry viewing modal
         }
       } catch (error) {
         showNotification('Error loading inquiry details', 'error');
@@ -1341,14 +1289,12 @@ Date: \${new Date(inquiry.created_at).toLocaleString()}
       }
     };
 
-    // Settings Management Functions
     async function loadSettings() {
       try {
         const response = await API.get('/settings');
         if (response.success) {
           const settings = response.data;
 
-          // Populate form fields
           document.getElementById('settings-site-name').value = settings.site_name || '';
           document.getElementById('settings-site-description').value = settings.site_description || '';
           document.getElementById('settings-company-intro').value = settings.company_intro || '';
@@ -1358,6 +1304,18 @@ Date: \${new Date(inquiry.created_at).toLocaleString()}
           document.getElementById('settings-linkedin').value = settings.linkedin || '';
           document.getElementById('settings-facebook').value = settings.facebook || '';
           document.getElementById('settings-twitter').value = settings.twitter || '';
+
+          const adminUsernameEl = document.getElementById('admin-username');
+          const profileUsernameEl = document.getElementById('profileUsername');
+          const profileEmailEl = document.getElementById('profileEmail');
+
+          if (adminUsernameEl && profileUsernameEl) {
+            profileUsernameEl.value = adminUsernameEl.textContent.trim() || '';
+          }
+
+          if (profileEmailEl && !profileEmailEl.value) {
+            profileEmailEl.value = '';
+          }
         }
       } catch (error) {
         console.error('Error loading settings:', error);
@@ -1367,7 +1325,6 @@ Date: \${new Date(inquiry.created_at).toLocaleString()}
 
     window.loadSettings = loadSettings;
 
-    // Disable settings save for non-super admins
     if (!isSuperAdmin) {
       const saveSettingsBtn = document.getElementById('save-settings-btn');
       if (saveSettingsBtn) {
@@ -1377,7 +1334,6 @@ Date: \${new Date(inquiry.created_at).toLocaleString()}
         saveSettingsBtn.style.cursor = 'not-allowed';
       }
 
-      // Make all settings form fields readonly for non-super admins
       const settingsForm = document.getElementById('settings-form');
       if (settingsForm) {
         const inputs = settingsForm.querySelectorAll('input, textarea');
@@ -1388,11 +1344,9 @@ Date: \${new Date(inquiry.created_at).toLocaleString()}
       }
     }
 
-    // Handle settings form submission
     document.getElementById('settings-form').addEventListener('submit', async function(e) {
       e.preventDefault();
 
-      // Check if user is super admin
       if (!isSuperAdmin) {
         showNotification('Only super admin can save settings', 'error');
         return;
@@ -1425,84 +1379,87 @@ Date: \${new Date(inquiry.created_at).toLocaleString()}
 
     // Initialize dashboard
     loadDashboardStats();
-      async function updateProfile() {
-  const username = document.getElementById('profileUsername').value.trim();
-  const email = document.getElementById('profileEmail').value.trim();
-  const token = localStorage.getItem('admin_token');
 
-  if (!username) {
-    alert('Please enter a new username');
-    return;
-  }
+    async function updateProfile() {
+      const username = document.getElementById('profileUsername').value.trim();
+      const email = document.getElementById('profileEmail').value.trim();
+      const token = localStorage.getItem('admin_token');
 
-  try {
-    const response = await fetch('/api/admin/profile', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        username,
-        email
-      })
-    });
+      if (!username) {
+        alert('Please enter a new username');
+        return;
+      }
 
-    const result = await response.json();
+      try {
+        const response = await fetch('/api/admin/profile', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify({
+            username,
+            email
+          })
+        });
 
-    if (!response.ok) {
-      throw new Error(result.error || 'Failed to update profile');
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Failed to update profile');
+        }
+
+        alert('Profile updated successfully. Please log in again.');
+        localStorage.removeItem('admin_token');
+        localStorage.removeItem('admin_role');
+        window.location.href = '/admin/login';
+      } catch (error) {
+        alert(error.message || 'Failed to update profile');
+      }
     }
 
-    alert('Profile updated successfully. Please log in again.');
-    localStorage.removeItem('admin_token');
-    window.location.href = '/admin';
-  } catch (error) {
-    alert(error.message || 'Failed to update profile');
-  }
-}
+    async function updatePassword() {
+      const currentPassword = document.getElementById('currentPassword').value.trim();
+      const newPassword = document.getElementById('newPassword').value.trim();
+      const token = localStorage.getItem('admin_token');
 
-async function updatePassword() {
-  const currentPassword = document.getElementById('currentPassword').value.trim();
-  const newPassword = document.getElementById('newPassword').value.trim();
-  const token = localStorage.getItem('admin_token');
+      if (!currentPassword || !newPassword) {
+        alert('Please enter both current password and new password');
+        return;
+      }
 
-  if (!currentPassword || !newPassword) {
-    alert('Please enter both current password and new password');
-    return;
-  }
+      if (newPassword.length < 6) {
+        alert('New password must be at least 6 characters long');
+        return;
+      }
 
-  if (newPassword.length < 6) {
-    alert('New password must be at least 6 characters long');
-    return;
-  }
+      try {
+        const response = await fetch('/api/admin/password', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify({
+            currentPassword,
+            newPassword
+          })
+        });
 
-  try {
-    const response = await fetch('/api/admin/password', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        currentPassword,
-        newPassword
-      })
-    });
+        const result = await response.json();
 
-    const result = await response.json();
+        if (!response.ok) {
+          throw new Error(result.error || 'Failed to update password');
+        }
 
-    if (!response.ok) {
-      throw new Error(result.error || 'Failed to update password');
+        alert('Password updated successfully. Please log in again.');
+        localStorage.removeItem('admin_token');
+        localStorage.removeItem('admin_role');
+        window.location.href = '/admin/login';
+      } catch (error) {
+        alert(error.message || 'Failed to update password');
+      }
     }
-
-    alert('Password updated successfully. Please log in again.');
-    localStorage.removeItem('admin_token');
-    window.location.href = '/admin';
-  } catch (error) {
-    alert(error.message || 'Failed to update password');
-  }
-}
   </script>
 </body>
 </html>`;
