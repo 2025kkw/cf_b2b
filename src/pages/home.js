@@ -24,36 +24,14 @@ export async function homePage(env) {
   }
 
   const content = `
-    <!-- Hero Section -->
-    <section class="hero">
-      <div class="container">
-        <h1>Welcome to HydraServo Intelligent Equipment Co., Ltd.</h1>
-        <p id="hero-subtitle">Your trusted partner for high-quality industrial products and innovative solutions worldwide</p>
-        <div style="margin-top: 2rem;">
-          <a href="/products" class="btn btn-primary hide-on-mobile" style="margin-right: 1rem;">Browse Products</a>
-          <a href="/contact" class="btn btn-secondary">Contact Us</a>
-        </div>
+      <!-- Featured Products -->
+    <section class="container" style="margin-top: 3rem; margin-bottom: 3rem;">
+      <h2 style="text-align: center; font-size: 2rem; margin-bottom: 2rem; color: var(--primary-color);">Featured Products</h2>
+      <div id="featured-products" class="grid grid-3">
+        <div class="spinner"></div>
       </div>
-    </section>
-
-    <style>
-      @media (max-width: 768px) {
-        .hide-on-mobile {
-          display: none !important;
-        }
-      }
-    </style>
-
-    <!-- Company Introduction -->
-    <section class="container" style="margin-top: 3rem;">
-      <div style="text-align: center; max-width: 800px; margin: 0 auto;">
-        <h2 style="font-size: 2rem; margin-bottom: 1rem; color: var(--primary-color);">About Our Company</h2>
-        <p id="company-intro" style="color: var(--text-light); font-size: 1.1rem; line-height: 1.8;">
-          We are a leading manufacturer and supplier of high-quality industrial products.
-          With over 20 years of experience, we serve clients across the globe with innovative
-          solutions and exceptional customer service. Our commitment to quality and reliability
-          has made us a trusted partner in the industry.
-        </p>
+      <div style="text-align: center; margin-top: 2rem;">
+        <a href="/products" class="btn btn-primary">View All Products</a>
       </div>
     </section>
 
@@ -100,14 +78,36 @@ export async function homePage(env) {
       </div>
     </section>
 
-    <!-- Featured Products -->
-    <section class="container" style="margin-top: 3rem; margin-bottom: 3rem;">
-      <h2 style="text-align: center; font-size: 2rem; margin-bottom: 2rem; color: var(--primary-color);">Featured Products</h2>
-      <div id="featured-products" class="grid grid-3">
-        <div class="spinner"></div>
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container">
+        <h1>Welcome to HydraServo Intelligent Equipment Co., Ltd.</h1>
+        <p id="hero-subtitle">Your trusted partner for high-quality industrial products and innovative solutions worldwide</p>
+        <div style="margin-top: 2rem;">
+          <a href="/products" class="btn btn-primary hide-on-mobile" style="margin-right: 1rem;">Browse Products</a>
+          <a href="/contact" class="btn btn-secondary">Contact Us</a>
+        </div>
       </div>
-      <div style="text-align: center; margin-top: 2rem;">
-        <a href="/products" class="btn btn-primary">View All Products</a>
+    </section>
+
+    <style>
+      @media (max-width: 768px) {
+        .hide-on-mobile {
+          display: none !important;
+        }
+      }
+    </style>
+
+    <!-- Company Introduction -->
+    <section class="container" style="margin-top: 3rem;">
+      <div style="text-align: center; max-width: 800px; margin: 0 auto;">
+        <h2 style="font-size: 2rem; margin-bottom: 1rem; color: var(--primary-color);">About Our Company</h2>
+        <p id="company-intro" style="color: var(--text-light); font-size: 1.1rem; line-height: 1.8;">
+          We are a leading manufacturer and supplier of high-quality industrial products.
+          With over 20 years of experience, we serve clients across the globe with innovative
+          solutions and exceptional customer service. Our commitment to quality and reliability
+          has made us a trusted partner in the industry.
+        </p>
       </div>
     </section>
   `;
