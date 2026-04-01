@@ -11,8 +11,6 @@ export async function adminDashboard(env) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard - B2B Product Exhibition</title>
   <style>
-    /* Main Stylesheet for B2B Website */
-
     :root {
       --primary-color: #2563eb;
       --secondary-color: #1e40af;
@@ -36,7 +34,6 @@ export async function adminDashboard(env) {
       background: #ffffff;
     }
 
-    /* Buttons */
     .btn {
       display: inline-block;
       padding: 0.75rem 1.5rem;
@@ -66,7 +63,6 @@ export async function adminDashboard(env) {
       background: #d97706;
     }
 
-    /* Grid Layout */
     .grid {
       display: grid;
       gap: 2rem;
@@ -76,11 +72,11 @@ export async function adminDashboard(env) {
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     }
 
-    /* Admin specific styles */
     .admin-layout {
       display: flex;
       min-height: 100vh;
     }
+
     .admin-sidebar {
       width: 250px;
       background: var(--text-dark);
@@ -90,6 +86,7 @@ export async function adminDashboard(env) {
       height: 100vh;
       overflow-y: auto;
     }
+
     .admin-content {
       flex: 1;
       margin-left: 250px;
@@ -97,6 +94,7 @@ export async function adminDashboard(env) {
       background: var(--bg-light);
       min-height: 100vh;
     }
+
     .admin-header {
       background: white;
       padding: 1.5rem 2rem;
@@ -106,12 +104,15 @@ export async function adminDashboard(env) {
       justify-content: space-between;
       align-items: center;
     }
+
     .sidebar-nav {
       list-style: none;
     }
+
     .sidebar-nav li {
       margin: 0;
     }
+
     .sidebar-nav a {
       display: flex;
       align-items: center;
@@ -120,38 +121,45 @@ export async function adminDashboard(env) {
       text-decoration: none;
       transition: all 0.3s;
     }
+
     .sidebar-nav a:hover,
     .sidebar-nav a.active {
       background: rgba(255,255,255,0.1);
       color: white;
     }
+
     .stat-card {
       background: white;
       padding: 1.5rem;
       border-radius: 0.5rem;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
+
     .stat-card h3 {
       color: var(--text-light);
       font-size: 0.875rem;
       font-weight: 500;
       margin-bottom: 0.5rem;
     }
+
     .stat-card .stat-value {
       font-size: 2rem;
       font-weight: 700;
       color: var(--primary-color);
     }
+
     .table-container {
       background: white;
       border-radius: 0.5rem;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       overflow: hidden;
     }
+
     .table {
       width: 100%;
       border-collapse: collapse;
     }
+
     .table th {
       background: var(--bg-light);
       padding: 1rem;
@@ -160,13 +168,16 @@ export async function adminDashboard(env) {
       color: var(--text-dark);
       border-bottom: 2px solid var(--border-color);
     }
+
     .table td {
       padding: 1rem;
       border-bottom: 1px solid var(--border-color);
     }
+
     .table tr:hover {
       background: var(--bg-light);
     }
+
     .badge {
       display: inline-block;
       padding: 0.25rem 0.75rem;
@@ -174,49 +185,30 @@ export async function adminDashboard(env) {
       font-size: 0.85rem;
       font-weight: 500;
     }
+
     .badge-pending {
       background: #fef3c7;
       color: #92400e;
     }
+
     .badge-processing {
       background: #dbeafe;
       color: #1e40af;
     }
+
     .badge-completed {
       background: #d1fae5;
       color: #065f46;
     }
-    .tab-nav {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 2rem;
-      border-bottom: 2px solid var(--border-color);
-    }
-    .tab-btn {
-      padding: 1rem 1.5rem;
-      background: none;
-      border: none;
-      border-bottom: 3px solid transparent;
-      color: var(--text-light);
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    .tab-btn:hover {
-      color: var(--primary-color);
-    }
-    .tab-btn.active {
-      color: var(--primary-color);
-      border-bottom-color: var(--primary-color);
-    }
+
     .tab-content {
       display: none;
     }
+
     .tab-content.active {
       display: block;
     }
 
-    /* Modal Styles */
     .modal {
       display: none;
       position: fixed;
@@ -405,6 +397,7 @@ export async function adminDashboard(env) {
         height: auto;
         position: relative;
       }
+
       .admin-content {
         margin-left: 0;
       }
@@ -413,7 +406,6 @@ export async function adminDashboard(env) {
 </head>
 <body>
   <div class="admin-layout">
-    <!-- Sidebar -->
     <aside class="admin-sidebar">
       <div style="padding: 0 2rem 2rem 2rem;">
         <h2 style="color: var(--accent-color); font-size: 1.5rem;">B2B Admin</h2>
@@ -427,7 +419,6 @@ export async function adminDashboard(env) {
       </ul>
     </aside>
 
-    <!-- Main Content -->
     <main class="admin-content">
       <div class="admin-header">
         <div>
@@ -438,14 +429,13 @@ export async function adminDashboard(env) {
           </p>
         </div>
         <div style="display: flex; gap: 1rem;">
-          <a href="/" target="_blank" class="btn btn-primary" style="text-decoration: none; display: flex; align-items: center; ">
+          <a href="/" target="_blank" class="btn btn-primary" style="text-decoration: none; display: flex; align-items: center;">
             Preview
           </a>
           <button id="logout-btn-header" class="btn btn-secondary">Logout</button>
         </div>
       </div>
 
-      <!-- Overview Tab -->
       <div id="overview-tab" class="tab-content active">
         <div class="grid grid-3" style="margin-bottom: 2rem;">
           <div class="stat-card">
@@ -481,7 +471,6 @@ export async function adminDashboard(env) {
         </div>
       </div>
 
-      <!-- Products Tab -->
       <div id="products-tab" class="tab-content">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
           <h2 style="font-size: 1.25rem; color: var(--text-dark);">Manage Products</h2>
@@ -492,7 +481,6 @@ export async function adminDashboard(env) {
         </div>
       </div>
 
-      <!-- Inquiries Tab -->
       <div id="inquiries-tab" class="tab-content">
         <h2 style="font-size: 1.25rem; margin-bottom: 1.5rem; color: var(--text-dark);">Manage Inquiries</h2>
         <div class="table-container">
@@ -500,43 +488,9 @@ export async function adminDashboard(env) {
         </div>
       </div>
 
-      <!-- Settings Tab -->
       <div id="settings-tab" class="tab-content">
         <h2 style="font-size: 1.25rem; margin-bottom: 1.5rem; color: var(--text-dark);">Website Settings</h2>
         <div style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); max-width: 800px;">
-
-          <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
-            Account Settings
-          </h3>
-
-          <div class="form-group">
-            <label class="form-label" for="profileUsername">New Username</label>
-            <input type="text" id="profileUsername" class="form-input" placeholder="Enter new username">
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="profileEmail">Email</label>
-            <input type="email" id="profileEmail" class="form-input" placeholder="Enter email">
-          </div>
-
-          <div class="form-group" style="margin-bottom: 2rem;">
-            <button type="button" class="btn btn-primary" onclick="updateProfile()">Save Profile</button>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="currentPassword">Current Password</label>
-            <input type="password" id="currentPassword" class="form-input" placeholder="Enter current password">
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="newPassword">New Password</label>
-            <input type="password" id="newPassword" class="form-input" placeholder="Enter new password">
-          </div>
-
-          <div class="form-group" style="margin-bottom: 2rem;">
-            <button type="button" class="btn btn-secondary" onclick="updatePassword()">Change Password</button>
-          </div>
-
           <form id="settings-form">
             <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
               Basic Information
@@ -599,13 +553,39 @@ export async function adminDashboard(env) {
               <button type="submit" id="save-settings-btn" class="btn btn-primary" style="margin-right: 1rem;">Save Settings</button>
               <button type="button" class="btn btn-secondary" onclick="loadSettings()">Reset</button>
             </div>
+
+            <h3 style="font-size: 1.1rem; margin: 2rem 0 1rem; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
+              Account Settings
+            </h3>
+
+            <div class="form-group">
+              <label class="form-label" for="profileUsername">New Username</label>
+              <input type="text" id="profileUsername" class="form-input" placeholder="Enter new username">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 2rem;">
+              <button type="button" class="btn btn-primary" onclick="updateProfile()">Save Username</button>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="currentPassword">Current Password</label>
+              <input type="password" id="currentPassword" class="form-input" placeholder="Enter current password">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="newPassword">New Password</label>
+              <input type="password" id="newPassword" class="form-input" placeholder="Enter new password">
+            </div>
+
+            <div class="form-group">
+              <button type="button" class="btn btn-secondary" onclick="updatePassword()">Change Password</button>
+            </div>
           </form>
         </div>
       </div>
     </main>
   </div>
 
-  <!-- Product Edit/Add Modal -->
   <div id="product-modal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -678,12 +658,6 @@ export async function adminDashboard(env) {
   </div>
 
   <script>
-    /**
-     * Main JavaScript file for B2B Website
-     * Handles common functionality across all pages
-     */
-
-    // Mobile menu toggle
     document.addEventListener('DOMContentLoaded', function() {
       const menuToggle = document.querySelector('.menu-toggle');
       const navMenu = document.querySelector('.nav-menu');
@@ -693,7 +667,6 @@ export async function adminDashboard(env) {
           navMenu.classList.toggle('active');
         });
 
-        // Close menu when clicking outside
         document.addEventListener('click', function(event) {
           if (!menuToggle.contains(event.target) && !navMenu.contains(event.target)) {
             navMenu.classList.remove('active');
@@ -701,7 +674,6 @@ export async function adminDashboard(env) {
         });
       }
 
-      // Set active nav link based on current page
       const currentPath = window.location.pathname;
       const navLinks = document.querySelectorAll('.nav-link');
 
@@ -712,7 +684,6 @@ export async function adminDashboard(env) {
       });
     });
 
-    // API helper functions
     const API = {
       baseURL: '/api',
 
@@ -763,13 +734,11 @@ export async function adminDashboard(env) {
       },
     };
 
-    // Form validation helper
     function validateEmail(email) {
       const re = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
       return re.test(String(email).toLowerCase());
     }
 
-    // Show notification
     function showNotification(message, type = 'info') {
       const notification = document.createElement('div');
       notification.className = \`notification notification-\${type}\`;
@@ -795,7 +764,6 @@ export async function adminDashboard(env) {
       }, 3000);
     }
 
-    // Add CSS animations
     const style = document.createElement('style');
     style.textContent = \`
       @keyframes slideIn {
@@ -821,19 +789,12 @@ export async function adminDashboard(env) {
     \`;
     document.head.appendChild(style);
 
-    // Export for use in other scripts
     window.API = API;
     window.validateEmail = validateEmail;
     window.showNotification = showNotification;
   </script>
 
   <script>
-    /**
-     * Admin Dashboard JavaScript
-     * Handles all admin dashboard functionality
-     */
-
-    // Check authentication
     const token = localStorage.getItem('admin_token');
     const userRole = localStorage.getItem('admin_role') || 'admin';
     const isSuperAdmin = userRole === 'super_admin';
@@ -842,7 +803,6 @@ export async function adminDashboard(env) {
       window.location.href = '/admin/login';
     }
 
-    // Verify token on page load and get user info
     API.post('/admin/verify', { token })
       .then(response => {
         if (response.success && response.data.user) {
@@ -859,14 +819,8 @@ export async function adminDashboard(env) {
           }
 
           const profileUsername = document.getElementById('profileUsername');
-          const profileEmail = document.getElementById('profileEmail');
-
           if (profileUsername) {
             profileUsername.value = response.data.user.username || '';
-          }
-
-          if (profileEmail) {
-            profileEmail.value = response.data.user.email || '';
           }
         }
       })
@@ -876,7 +830,6 @@ export async function adminDashboard(env) {
         window.location.href = '/admin/login';
       });
 
-    // Add authorization header to all API requests
     API.get = function(endpoint) {
       return fetch(\`\${this.baseURL}\${endpoint}\`, {
         headers: {
@@ -1118,10 +1071,8 @@ export async function adminDashboard(env) {
 
         if (result.success) {
           document.getElementById('product-image-url').value = result.data.url;
-
           const preview = document.getElementById('image-preview');
           preview.innerHTML = \`<img src="\${result.data.url}" alt="Product preview">\`;
-
           showNotification('Image uploaded successfully', 'success');
         } else {
           showNotification(result.error || 'Upload failed', 'error');
@@ -1307,14 +1258,8 @@ Date: \${new Date(inquiry.created_at).toLocaleString()}
 
           const adminUsernameEl = document.getElementById('admin-username');
           const profileUsernameEl = document.getElementById('profileUsername');
-          const profileEmailEl = document.getElementById('profileEmail');
-
           if (adminUsernameEl && profileUsernameEl) {
             profileUsernameEl.value = adminUsernameEl.textContent.trim() || '';
-          }
-
-          if (profileEmailEl && !profileEmailEl.value) {
-            profileEmailEl.value = '';
           }
         }
       } catch (error) {
@@ -1338,8 +1283,14 @@ Date: \${new Date(inquiry.created_at).toLocaleString()}
       if (settingsForm) {
         const inputs = settingsForm.querySelectorAll('input, textarea');
         inputs.forEach(input => {
-          input.readOnly = true;
-          input.style.backgroundColor = '#f3f4f6';
+          if (
+            input.id !== 'profileUsername' &&
+            input.id !== 'currentPassword' &&
+            input.id !== 'newPassword'
+          ) {
+            input.readOnly = true;
+            input.style.backgroundColor = '#f3f4f6';
+          }
         });
       }
     }
@@ -1377,12 +1328,10 @@ Date: \${new Date(inquiry.created_at).toLocaleString()}
       }
     });
 
-    // Initialize dashboard
     loadDashboardStats();
 
     async function updateProfile() {
       const username = document.getElementById('profileUsername').value.trim();
-      const email = document.getElementById('profileEmail').value.trim();
       const token = localStorage.getItem('admin_token');
 
       if (!username) {
@@ -1398,8 +1347,7 @@ Date: \${new Date(inquiry.created_at).toLocaleString()}
             'Authorization': 'Bearer ' + token
           },
           body: JSON.stringify({
-            username,
-            email
+            username
           })
         });
 
@@ -1409,7 +1357,7 @@ Date: \${new Date(inquiry.created_at).toLocaleString()}
           throw new Error(result.error || 'Failed to update profile');
         }
 
-        alert('Profile updated successfully. Please log in again.');
+        alert('Username updated successfully. Please log in again.');
         localStorage.removeItem('admin_token');
         localStorage.removeItem('admin_role');
         window.location.href = '/admin/login';
