@@ -26,19 +26,7 @@ export async function homePage(env) {
 
   const content = `
     <!-- 【已调换：1. 特色产品区域现在在最顶部】 -->
-    <!-- Featured Products -->
-    <section class="container" style="margin-top: 3rem; margin-bottom: 3rem;">
-      <h2 style="text-align: center; font-size: 2rem; margin-bottom: 2rem; color: var(--primary-color);">Featured Hydraulic Products</h2>
-      <div id="featured-products" class="grid grid-3">
-        <div class="spinner"></div>
-      </div>
-      <div style="text-align: center; margin-top: 2rem;">
-        <a href="/products" class="btn btn-primary">View All Products</a>
-      </div>
-    </section>
-
-    <!-- 【已调换：2. 宣传语区域现在在产品下面】 -->
-    <!-- Hero Section -->
+     <!-- Hero Section -->
     <section class="hero">
       <div class="container">
         <h1>Welcome to Hydroservo Intelligent Equipment Co., Ltd.</h1>
@@ -66,6 +54,17 @@ export async function homePage(env) {
           Hydroservo Intelligent Equipment Co., Ltd. is a leading professional manufacturer of hydraulic servo equipment and intelligent fluid power systems. 
           With years of technical accumulation in the hydraulic industry, we serve clients across the globe with reliable, efficient and cost-effective hydraulic solutions.
         </p>
+      </div>
+    </section>
+       <!-- 【已调换：2. 宣传语区域现在在产品下面】 -->
+    <!-- Featured Products -->
+    <section class="container" style="margin-top: 3rem; margin-bottom: 3rem;">
+      <h2 style="text-align: center; font-size: 2rem; margin-bottom: 2rem; color: var(--primary-color);">Featured Hydraulic Products</h2>
+      <div id="featured-products" class="grid grid-3">
+        <div class="spinner"></div>
+      </div>
+      <div style="text-align: center; margin-top: 2rem;">
+        <a href="/products" class="btn btn-primary">View All Products</a>
       </div>
     </section>
 
