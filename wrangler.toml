@@ -6,7 +6,7 @@ compatibility_date = "2025-01-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "b2b_database"
-database_id = "8755429a-7eb4-4dac-8aa4-55e4b58b2f63"
+database_id = "530862f3-ee94-489e-83b4-8bda38d8f154"
 
 # Environment variables
 [vars]
@@ -19,4 +19,4 @@ bucket_name = "b2b-product-images"
 
 [[kv_namespaces]]
 binding = "STATIC_ASSETS" #
-id = "f665b3c2520b4900bc27aef4c8a9d82d" # 从 Cloudflare 获取的 KV Namespace ID
+id = "0946ceea9b9a4d5ba5addf62d35f574b" # 从 Cloudflare 获取的 KV Namespace ID
