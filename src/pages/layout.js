@@ -610,7 +610,7 @@ function createFooter() {
       </div>
     </div>
     <div class="footer-bottom">
-      <p>&copy; ${new Date().getFullYear()} B2B Product Exhibition. All rights reserved. | <a href="/admin" style="color: var(--accent-color); text-decoration: none; margin-left: 1rem;">Admin Login</a></p>
+      <p>&copy; ${new Date().getFullYear()} B2B Product Exhibition. All rights reserved.</p>
     </div>
   </footer>`;
 }
