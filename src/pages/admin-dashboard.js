@@ -1828,7 +1828,7 @@ Message: \${inquiry.message}\`);
     // Initialize dashboard
     loadDashboardStats();
   </script>
-  \`;
+  `;
 
   return new Response(html, {
     headers: {
