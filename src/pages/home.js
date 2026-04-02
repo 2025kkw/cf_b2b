@@ -101,72 +101,166 @@ export async function homePage(env) {
       </div>
     </section>
 
-    <!-- Core Optimization Styles -->
+    <!-- Enhanced Home Page Styles -->
     <style>
-      /* --- 核心修复：Hero区域拉宽、减少换行 --- */
-      .hero {
-        padding: 4rem 0;
-      }
+      /* Hero Container */
       .hero-container {
         width: 100%;
         max-width: 1400px;
         margin: 0 auto;
-        padding: 0 1rem; /* 手机端左右仅留1rem边距，最大化文字宽度 */
+        padding: 0 1.5rem;
         text-align: center;
+        position: relative;
+        z-index: 1;
       }
 
-      /* 标题优化：强制不拆分单词、自动适配字号、减少换行 */
+      /* Hero Title - Enhanced */
       .hero h1 {
-        font-size: clamp(1.4rem, 5.5vw, 3rem) !important; /* 手机端自动缩小，电脑端放大 */
-        line-height: 1.35 !important;
-        margin-bottom: 1.25rem !important;
-        word-wrap: normal;
-        word-break: keep-all; /* 禁止拆分单词，整词换行 */
-        white-space: normal;
-        width: 100%;
-        letter-spacing: -0.02em; /* 稍微收紧字母，减少换行次数 */
-      }
-
-      /* 副标题优化 */
-      .hero p {
-        font-size: clamp(1rem, 3.5vw, 1.25rem) !important;
-        line-height: 1.6 !important;
-        margin-bottom: 2rem !important;
+        font-size: clamp(1.5rem, 5vw, 3.5rem) !important;
+        line-height: 1.2 !important;
+        margin-bottom: 1.5rem !important;
         word-wrap: normal;
         word-break: keep-all;
-        max-width: 90%;
-        margin-left: auto;
-        margin-right: auto;
+        white-space: normal;
+        width: 100%;
+        letter-spacing: -0.03em;
+        font-weight: 800;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
       }
 
-      /* 按钮优化 */
+      /* Hero Subtitle - Enhanced */
+      .hero p {
+        font-size: clamp(1.05rem, 2.5vw, 1.35rem) !important;
+        line-height: 1.7 !important;
+        margin-bottom: 2.5rem !important;
+        word-wrap: normal;
+        word-break: keep-all;
+        max-width: 750px;
+        margin-left: auto;
+        margin-right: auto;
+        opacity: 0.95;
+        font-weight: 400;
+      }
+
+      /* Hero Buttons */
       .hero-buttons {
         display: flex;
-        gap: 1rem;
+        gap: 1.25rem;
         align-items: center;
         justify-content: center;
         flex-wrap: wrap;
       }
+
       .hero-buttons .btn {
-        padding: 0.875rem 2rem;
+        padding: 1rem 2.5rem;
         font-size: 1.05rem;
-        min-width: 160px;
+        min-width: 180px;
         text-align: center;
+        font-weight: 700;
       }
 
-      /* 平板/手机端额外优化 */
+      /* Section Spacing */
+      .section-spacing {
+        margin-top: 4rem !important;
+        margin-bottom: 4rem !important;
+        padding: 0 1.5rem;
+      }
+
+      .intro-container {
+        text-align: center;
+        max-width: 950px;
+        margin: 0 auto;
+      }
+
+      .intro-container h2 {
+        font-size: 2.25rem;
+        margin-bottom: 1.5rem;
+        font-weight: 800;
+        letter-spacing: -0.025em;
+      }
+
+      .intro-container p {
+        font-size: 1.15rem;
+        line-height: 1.85;
+      }
+
+      /* Products Section Title */
+      .section-spacing h2 {
+        font-size: 2.25rem;
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        margin-bottom: 2.5rem;
+      }
+
+      /* Product Grid */
+      @media (max-width: 768px) {
+        .grid-3 {
+          grid-template-columns: repeat(2, 1fr) !important;
+          gap: 1.25rem !important;
+        }
+        .card-image { 
+          height: 160px !important; 
+        }
+      }
+      @media (max-width: 480px) {
+        .grid-3 { 
+          grid-template-columns: 1fr !important; 
+        }
+        .section-spacing h2 {
+          font-size: 1.75rem;
+        }
+      }
+
+      /* Features Grid */
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.75rem;
+      }
+      
+      .features-grid .card {
+        border: none;
+        background: linear-gradient(145deg, var(--bg-white), var(--bg-light));
+      }
+      
+      .features-grid .card:hover {
+        background: linear-gradient(145deg, var(--bg-light), var(--bg-white));
+      }
+      
+      .features-grid .card-content {
+        padding: 2rem 1.75rem;
+      }
+      
+      @media (max-width: 1024px) {
+        .features-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 1.5rem;
+        }
+      }
+      
+      @media (max-width: 640px) {
+        .features-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Card Description */
+      .card-description {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.7;
+      }
+
+      /* Mobile Responsive for Hero */
       @media (max-width: 768px) {
         .hero {
-          padding: 3rem 0;
+          padding: 4.5rem 1rem;
         }
         .hero-container {
-          padding: 0 0.75rem; /* 进一步缩小边距，拉宽文字 */
-        }
-        .hero h1 {
-          letter-spacing: -0.03em;
-        }
-        .hero p {
-          max-width: 100%;
+          padding: 0 1rem;
         }
         .hero-buttons {
           flex-direction: column;
@@ -174,58 +268,12 @@ export async function homePage(env) {
         }
         .hero-buttons .btn {
           width: 100%;
-          max-width: 280px;
+          max-width: 320px;
         }
-      }
-
-      /* 其他区域通用优化 */
-      .section-spacing {
-        margin-top: 2.5rem !important;
-        margin-bottom: 2.5rem !important;
-        padding: 0 1rem;
-      }
-      .intro-container {
-        text-align: center;
-        max-width: 900px;
-        margin: 0 auto;
-      }
-
-      /* 产品网格适配 */
-      @media (max-width: 768px) {
-        .grid-3 {
-          grid-template-columns: 1fr 1fr !important;
-          gap: 1rem !important;
+        .section-spacing {
+          margin-top: 3rem !important;
+          margin-bottom: 3rem !important;
         }
-        .card-image { height: 150px !important; }
-      }
-      @media (max-width: 480px) {
-        .grid-3 { grid-template-columns: 1fr !important; }
-      }
-
-      /* 优势区域2x2网格 */
-      .features-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 1.5rem;
-      }
-      @media (max-width: 900px) {
-        .features-grid {
-          grid-template-columns: repeat(2, 1fr);
-          gap: 1rem;
-        }
-        .features-grid .card-content {
-          padding: 1.25rem;
-        }
-      }
-
-      /* 卡片描述文本限制 */
-      .card-description {
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        line-height: 1.5;
       }
     </style>
   `;
