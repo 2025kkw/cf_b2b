@@ -874,7 +874,7 @@ export async function adminDashboard(env) {
             </form>
           </div>
 
-          <div style="background: var(--bg-white); padding: 2rem; border-radius: var(--radius-xl); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); border-top: 4px solid var(--primary-color);">
+          <div style="background: var(--bg-white); padding: 2rem; border-radius: var(--radius-xl); box-shadow: var(--shadow-md); border: 1px solid var(--border-color);">
             <h3 style="font-size: 1.25rem; margin-bottom: 1.5rem; color: var(--text-dark); border-bottom: 2px solid var(--border-color); padding-bottom: 0.75rem; font-weight: 800;">
               🔐 Change Password
             </h3>
