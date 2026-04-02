@@ -27,7 +27,7 @@ export async function homePage(env) {
     <!-- Hero Section - Mobile Width Fully Optimized -->
     <section class="hero">
       <div class="hero-container">
-        <h1>HydraServo Intelligent Equipment</h1>
+        <h1>Welcome to HydraServo Intelligent Equipment</h1>
         <p id="hero-subtitle">Your trusted partner for high-quality industrial products and innovative solutions worldwide</p>
         <div class="hero-buttons">
           <a href="/products" class="btn btn-primary">Browse Products</a>
