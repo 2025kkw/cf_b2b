@@ -26,6 +26,24 @@ export async function handleApiRequest(request, env) {
       return handleCategories(request, env, corsHeaders);
     }
 
+    // Orders API - New
+    if (path.startsWith('/api/orders')) {
+      const { handleOrders } = await import('./handlers/orders');
+      return handleOrders(request, env, corsHeaders);
+    }
+
+    // Customers API - New
+    if (path.startsWith('/api/customers')) {
+      const { handleCustomers } = await import('./handlers/customers');
+      return handleCustomers(request, env, corsHeaders);
+    }
+
+    // Favorites API - New
+    if (path.startsWith('/api/favorites')) {
+      const { handleFavorites } = await import('./handlers/favorites');
+      return handleFavorites(request, env, corsHeaders);
+    }
+
     // Settings API
     if (path.startsWith('/api/settings')) {
       const { handleSettings } = await import('./handlers/settings');

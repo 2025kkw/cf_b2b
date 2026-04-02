@@ -98,7 +98,102 @@ INSERT OR IGNORE INTO products (name, description, detailed_description, specifi
 ('Precision Calipers', 'Digital precision measuring calipers', 'Professional digital calipers with 0.01mm accuracy and digital display.', 'Accuracy: 0.01mm\nRange: 0-150mm\nDisplay: LCD', 'Tools', 1, 1),
 ('Aluminum Profile', 'Extruded aluminum profiles', 'Custom extruded aluminum profiles for structural applications.', 'Alloy: 6063-T5\nFinish: Anodized\nLength: 6m', 'Materials', 0, 1);
 
+-- Customers table - For customer management
+CREATE TABLE IF NOT EXISTS customers (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL UNIQUE,
+  company TEXT,
+  phone TEXT,
+  country TEXT,
+  address TEXT,
+  is_active INTEGER DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Orders table - For order management
+CREATE TABLE IF NOT EXISTS orders (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  order_number TEXT NOT NULL UNIQUE,
+  customer_id INTEGER,
+  customer_name TEXT,
+  customer_email TEXT,
+  customer_company TEXT,
+  total_amount REAL DEFAULT 0,
+  currency TEXT DEFAULT 'USD',
+  status TEXT DEFAULT 'pending', -- pending, confirmed, processing, shipped, delivered, cancelled
+  notes TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE SET NULL
+);
+
+-- Order Items table - For order line items
+CREATE TABLE IF NOT EXISTS order_items (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  order_id INTEGER NOT NULL,
+  product_id INTEGER NOT NULL,
+  product_name TEXT,
+  quantity INTEGER DEFAULT 1,
+  unit_price REAL DEFAULT 0,
+  total_price REAL DEFAULT 0,
+  notes TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+  FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+
+-- Product Favorites table - For product wishlist/favorites
+CREATE TABLE IF NOT EXISTS product_favorites (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  customer_email TEXT NOT NULL,
+  product_id INTEGER NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(customer_email, product_id),
+  FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+
+-- Product Views table - For product recommendations (track views)
+CREATE TABLE IF NOT EXISTS product_views (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  product_id INTEGER NOT NULL,
+  view_count INTEGER DEFAULT 1,
+  last_viewed TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+
+-- Create additional indexes
+CREATE INDEX IF NOT EXISTS idx_customers_email ON customers(email);
+CREATE INDEX IF NOT EXISTS idx_customers_is_active ON customers(is_active);
+CREATE INDEX IF NOT EXISTS idx_orders_order_number ON orders(order_number);
+CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
+CREATE INDEX IF NOT EXISTS idx_orders_customer_id ON orders(customer_id);
+CREATE INDEX IF NOT EXISTS idx_orders_created_at ON orders(created_at);
+CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id);
+CREATE INDEX IF NOT EXISTS idx_order_items_product_id ON order_items(product_id);
+CREATE INDEX IF NOT EXISTS idx_product_favorites_customer_email ON product_favorites(customer_email);
+CREATE INDEX IF NOT EXISTS idx_product_favorites_product_id ON product_favorites(product_id);
+CREATE INDEX IF NOT EXISTS idx_product_views_product_id ON product_views(product_id);
+
 -- Update products to use category_id (link by name)
 UPDATE products 
 SET category_id = (SELECT id FROM categories WHERE categories.name = products.category)
 WHERE category_id IS NULL AND category IN (SELECT name FROM categories);
+
+-- Insert sample customers
+INSERT OR IGNORE INTO customers (name, email, company, phone, country, address, is_active) VALUES
+('John Smith', 'john@example.com', 'Acme Corp', '+1-555-0100', 'USA', '123 Main St, New York', 1),
+('Maria Garcia', 'maria@example.com', 'Global Tech', '+1-555-0101', 'Canada', '456 Oak Ave, Toronto', 1),
+('David Chen', 'david@example.com', 'Asia Trading', '+86-10-12345678', 'China', '789 Beijing Rd, Beijing', 1);
+
+-- Insert sample orders
+INSERT OR IGNORE INTO orders (order_number, customer_id, customer_name, customer_email, customer_company, total_amount, currency, status, notes) VALUES
+('ORD-2024-001', 1, 'John Smith', 'john@example.com', 'Acme Corp', 15000.00, 'USD', 'confirmed', 'First sample order'),
+('ORD-2024-002', 2, 'Maria Garcia', 'maria@example.com', 'Global Tech', 8500.00, 'USD', 'processing', 'Priority shipping requested');
+
+-- Insert sample order items
+INSERT OR IGNORE INTO order_items (order_id, product_id, product_name, quantity, unit_price, total_price) VALUES
+(1, 1, 'Industrial CNC Machine', 1, 12000.00, 12000.00),
+(1, 5, 'Precision Calipers', 10, 300.00, 3000.00),
+(2, 2, 'Stainless Steel Sheet', 100, 85.00, 8500.00);
