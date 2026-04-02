@@ -249,40 +249,12 @@ async function getDashboardStats(request, env, corsHeaders) {
       'SELECT COUNT(*) as total_categories FROM categories WHERE is_active = 1'
     ).first();
 
-    // Get total customers
-    const { total_customers } = await env.DB.prepare(
-      'SELECT COUNT(*) as total_customers FROM customers WHERE is_active = 1'
-    ).first();
-
-    // Get total orders
-    const { total_orders } = await env.DB.prepare(
-      'SELECT COUNT(*) as total_orders FROM orders'
-    ).first();
-
-    // Get pending orders
-    const { pending_orders } = await env.DB.prepare(
-      'SELECT COUNT(*) as pending_orders FROM orders WHERE status = "pending"'
-    ).first();
-
-    // Get total revenue
-    const { total_revenue } = await env.DB.prepare(
-      'SELECT COALESCE(SUM(total_amount), 0) as total_revenue FROM orders WHERE status IN ("confirmed", "processing", "shipped", "delivered")'
-    ).first();
-
     // Get recent inquiries
     const { results: recent_inquiries } = await env.DB.prepare(
       `SELECT i.*, p.name as product_name
        FROM inquiries i
        LEFT JOIN products p ON i.product_id = p.id
        ORDER BY i.created_at DESC
-       LIMIT 5`
-    ).all();
-
-    // Get recent orders
-    const { results: recent_orders } = await env.DB.prepare(
-      `SELECT o.*
-       FROM orders o
-       ORDER BY o.created_at DESC
        LIMIT 5`
     ).all();
 
@@ -293,12 +265,7 @@ async function getDashboardStats(request, env, corsHeaders) {
         total_inquiries,
         pending_inquiries,
         total_categories,
-        total_customers,
-        total_orders,
-        pending_orders,
-        total_revenue,
         recent_inquiries,
-        recent_orders,
       },
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
