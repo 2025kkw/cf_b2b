@@ -1058,41 +1058,48 @@ export async function adminDashboard(env) {
   </div>
 
   <script>
+    // Auth
+    const token = localStorage.getItem('admin_token');
+    const userRole = localStorage.getItem('admin_role') || 'admin';
+    const isSuperAdmin = userRole === 'super_admin';
+
+    if (!token) window.location.href = '/admin/login';
+
     // Enhanced API helper
     const API = {
       baseURL: '/api',
       async get(endpoint) {
-        const response = await fetch(\`\${this.baseURL}\${endpoint}\`, {
-          headers: { 'Authorization': \`Bearer \${token}\` }
+        const response = await fetch(this.baseURL + endpoint, {
+          headers: { 'Authorization': 'Bearer ' + token }
         });
         return await response.json();
       },
       async post(endpoint, data) {
-        const response = await fetch(\`\${this.baseURL}\${endpoint}\`, {
+        const response = await fetch(this.baseURL + endpoint, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': \`Bearer \${token}\`
+            'Authorization': 'Bearer ' + token
           },
           body: JSON.stringify(data)
         });
         return await response.json();
       },
       async put(endpoint, data) {
-        const response = await fetch(\`\${this.baseURL}\${endpoint}\`, {
+        const response = await fetch(this.baseURL + endpoint, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': \`Bearer \${token}\`
+            'Authorization': 'Bearer ' + token
           },
           body: JSON.stringify(data)
         });
         return await response.json();
       },
       async delete(endpoint) {
-        const response = await fetch(\`\${this.baseURL}\${endpoint}\`, {
+        const response = await fetch(this.baseURL + endpoint, {
           method: 'DELETE',
-          headers: { 'Authorization': \`Bearer \${token}\` }
+          headers: { 'Authorization': 'Bearer ' + token }
         });
         return await response.json();
       }
@@ -1101,7 +1108,7 @@ export async function adminDashboard(env) {
     // Notification system
     function showNotification(message, type = 'info') {
       const notification = document.createElement('div');
-      notification.style.cssText = \`
+      notification.style.cssText = `
         position: fixed;
         top: 20px;
         right: 20px;
@@ -1179,7 +1186,7 @@ export async function adminDashboard(env) {
         tabButtons.forEach(btn => btn.classList.remove('active'));
         tabContents.forEach(content => content.classList.remove('active'));
         button.classList.add('active');
-        document.getElementById(\`\${tabName}-tab\`).classList.add('active');
+        document.getElementById(tabName + '-tab').classList.add('active');
         if (tabName === 'products') loadProducts();
         else if (tabName === 'categories') loadCategories();
         else if (tabName === 'inquiries') loadInquiries();
@@ -1200,15 +1207,15 @@ export async function adminDashboard(env) {
           document.getElementById('stat-categories').textContent = data.total_categories || 0;
           const tbody = document.getElementById('recent-inquiries-tbody');
           if (data.recent_inquiries && data.recent_inquiries.length > 0) {
-            tbody.innerHTML = data.recent_inquiries.map(inquiry => \`
+            tbody.innerHTML = data.recent_inquiries.map(inquiry => `
               <tr>
-                <td>\${inquiry.name}</td>
-                <td>\${inquiry.email}</td>
-                <td>\${inquiry.product_name || 'General Inquiry'}</td>
-                <td><span class="badge badge-\${inquiry.status}">\${inquiry.status}</span></td>
-                <td>\${new Date(inquiry.created_at).toLocaleDateString()}</td>
+                <td>${inquiry.name}</td>
+                <td>${inquiry.email}</td>
+                <td>${inquiry.product_name || 'General Inquiry'}</td>
+                <td><span class="badge badge-${inquiry.status}">${inquiry.status}</span></td>
+                <td>${new Date(inquiry.created_at).toLocaleDateString()}</td>
               </tr>
-            \`).join('');
+            `).join('');
           } else {
             tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-light);">No recent inquiries</td></tr>';
           }
@@ -1231,7 +1238,7 @@ export async function adminDashboard(env) {
         
         const categorySelect = document.getElementById('product-category');
         categorySelect.innerHTML = '<option value="">Select a category...</option>' + 
-          categories.map(c => \`<option value="\${c.name}">\${c.name}</option>\`).join('');
+          categories.map(c => '<option value="' + c.name + '">' + c.name + '</option>').join('');
         
         const container = document.getElementById('products-list');
         if (products.length === 0) {
@@ -1444,13 +1451,13 @@ export async function adminDashboard(env) {
         formData.append('file', file);
         const response = await fetch('/api/upload/image', {
           method: 'POST',
-          headers: { 'Authorization': \`Bearer \${token}\` },
+          headers: { 'Authorization': 'Bearer ' + token },
           body: formData
         });
         const result = await response.json();
         if (result.success) {
           document.getElementById('product-image-url').value = result.data.url;
-          document.getElementById('image-preview').innerHTML = \`<img src="\${result.data.url}" alt="Product preview">\`;
+          document.getElementById('image-preview').innerHTML = '<img src="' + result.data.url + '" alt="Product preview">';
           showNotification('Image uploaded successfully', 'success');
         } else {
           showNotification(result.error || 'Upload failed', 'error');
@@ -1464,7 +1471,7 @@ export async function adminDashboard(env) {
 
     window.editProduct = async function(id) {
       try {
-        const response = await API.get(\`/products/\${id}\`);
+        const response = await API.get('/products/' + id);
         if (response.success) {
           const product = response.data;
           document.getElementById('product-id').value = product.id;
@@ -1476,7 +1483,7 @@ export async function adminDashboard(env) {
           document.getElementById('product-image-url').value = product.image_url || '';
           document.getElementById('product-is-featured').checked = product.is_featured === 1;
           document.getElementById('product-is-active').checked = product.is_active === 1;
-          document.getElementById('image-preview').innerHTML = product.image_url ? \`<img src="\${product.image_url}" alt="Product preview">\` : '';
+          document.getElementById('image-preview').innerHTML = product.image_url ? '<img src="' + product.image_url + '" alt="Product preview">' : '';
           document.getElementById('modal-title').textContent = 'Edit Product';
           document.getElementById('product-modal').classList.add('active');
         }
@@ -1517,7 +1524,7 @@ export async function adminDashboard(env) {
       try {
         let response;
         if (productId) {
-          response = await API.put(\`/products/\${productId}\`, formData);
+          response = await API.put('/products/' + productId, formData);
         } else {
           response = await API.post('/products', formData);
         }
@@ -1541,7 +1548,7 @@ export async function adminDashboard(env) {
     window.deleteProduct = async function(id) {
       if (!confirm('Are you sure you want to delete this product?')) return;
       try {
-        await API.delete(\`/products/\${id}\`);
+        await API.delete('/products/' + id);
         showNotification('Product deleted successfully', 'success');
         loadProducts();
         loadDashboardStats();
@@ -1573,7 +1580,7 @@ export async function adminDashboard(env) {
 
     window.editCategory = async function(id) {
       try {
-        const response = await API.get(\`/categories/\${id}\`);
+        const response = await API.get('/categories/' + id);
         if (response.success) {
           const category = response.data;
           document.getElementById('category-id').value = category.id;
@@ -1591,7 +1598,7 @@ export async function adminDashboard(env) {
     window.deleteCategory = async function(id) {
       if (!confirm('Are you sure you want to delete this category?')) return;
       try {
-        await API.delete(\`/categories/\${id}\`);
+        await API.delete('/categories/' + id);
         showNotification('Category deleted successfully', 'success');
         loadCategories();
         loadDashboardStats();
@@ -1612,7 +1619,7 @@ export async function adminDashboard(env) {
       try {
         let response;
         if (categoryId) {
-          response = await API.put(\`/categories/\${categoryId}\`, formData);
+          response = await API.put('/categories/' + categoryId, formData);
         } else {
           response = await API.post('/categories', formData);
         }
@@ -1650,7 +1657,7 @@ export async function adminDashboard(env) {
 
     window.editAdmin = async function(id) {
       try {
-        const response = await API.get(\`/admin/admins/\${id}\`);
+        const response = await API.get('/admin/admins/' + id);
         if (response.success) {
           const admin = response.data;
           document.getElementById('admin-id').value = admin.id;
@@ -1669,7 +1676,7 @@ export async function adminDashboard(env) {
     window.deleteAdmin = async function(id) {
       if (!confirm('Are you sure you want to delete this administrator?')) return;
       try {
-        await API.delete(\`/admin/admins/\${id}\`);
+        await API.delete('/admin/admins/' + id);
         showNotification('Admin deleted successfully', 'success');
         loadAdmins();
       } catch (error) {
@@ -1692,7 +1699,7 @@ export async function adminDashboard(env) {
       try {
         let response;
         if (adminId) {
-          response = await API.put(\`/admin/admins/\${adminId}\`, formData);
+          response = await API.put('/admin/admins/' + adminId, formData);
         } else {
           response = await API.post('/admin/admins', formData);
         }
@@ -1715,14 +1722,10 @@ export async function adminDashboard(env) {
     // Inquiry Functions
     window.viewInquiry = async function(id) {
       try {
-        const response = await API.get(\`/inquiries/\${id}\`);
+        const response = await API.get('/inquiries/' + id);
         if (response.success) {
           const inquiry = response.data;
-          alert(\`Inquiry Details:
-Name: \${inquiry.name}
-Email: \${inquiry.email}
-Product: \${inquiry.product_name || 'General'}
-Message: \${inquiry.message}\`);
+          alert('Inquiry Details:\nName: ' + inquiry.name + '\nEmail: ' + inquiry.email + '\nProduct: ' + (inquiry.product_name || 'General') + '\nMessage: ' + inquiry.message);
         }
       } catch (error) {
         showNotification('Error loading inquiry details', 'error');
@@ -1731,7 +1734,7 @@ Message: \${inquiry.message}\`);
 
     window.updateInquiryStatus = async function(id, status) {
       try {
-        await API.put(\`/inquiries/\${id}\`, { status });
+        await API.put('/inquiries/' + id, { status });
         showNotification('Inquiry status updated', 'success');
       } catch (error) {
         showNotification('Error updating inquiry status', 'error');
@@ -1741,7 +1744,7 @@ Message: \${inquiry.message}\`);
     window.deleteInquiry = async function(id) {
       if (!confirm('Are you sure you want to delete this inquiry?')) return;
       try {
-        await API.delete(\`/inquiries/\${id}\`);
+        await API.delete('/inquiries/' + id);
         showNotification('Inquiry deleted successfully', 'success');
         loadInquiries();
         loadDashboardStats();
