@@ -20,6 +20,12 @@ export async function handleApiRequest(request, env) {
   }
 
   try {
+    // Categories API - New
+    if (path.startsWith('/api/categories')) {
+      const { handleCategories } = await import('./handlers/categories');
+      return handleCategories(request, env, corsHeaders);
+    }
+
     // Settings API
     if (path.startsWith('/api/settings')) {
       const { handleSettings } = await import('./handlers/settings');

@@ -63,27 +63,36 @@ export async function productsPage(env) {
   const scripts = `
     <script>
       let allProducts = [];
+      let allCategories = [];
 
-      // Load categories dynamically
-      function loadCategories(products) {
-        const categories = [...new Set(products.map(p => p.category).filter(c => c))];
-        const categoryFilter = document.getElementById('category-filter');
-
-        // Keep "All Categories" option and add dynamic categories
-        categories.forEach(category => {
-          const option = document.createElement('option');
-          option.value = category;
-          option.textContent = category;
-          categoryFilter.appendChild(option);
-        });
+      // Load categories from API
+      async function loadCategories() {
+        try {
+          const response = await API.get('/categories');
+          allCategories = response.data || [];
+          const categoryFilter = document.getElementById('category-filter');
+          
+          // Keep "All Categories" option and add dynamic categories
+          categoryFilter.innerHTML = '<option value="">All Categories</option>';
+          allCategories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category.name;
+            option.textContent = category.name;
+            categoryFilter.appendChild(option);
+          });
+        } catch (error) {
+          console.error('Error loading categories:', error);
+        }
       }
 
       // Load all products
       async function loadProducts() {
         try {
-          const response = await API.get('/products');
-          allProducts = response.data || [];
-          loadCategories(allProducts);
+          const [productsRes] = await Promise.all([
+            API.get('/products'),
+            loadCategories() // Load categories in parallel
+          ]);
+          allProducts = productsRes.data || [];
           displayProducts(allProducts);
         } catch (error) {
           console.error('Error loading products:', error);
@@ -110,7 +119,7 @@ export async function productsPage(env) {
             <div class="card-content">
               <div style="margin-bottom: 0.5rem;">
                 <span style="background: var(--primary-color); color: white; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.85rem;">
-                  \${product.category || 'General'}
+                  \${product.category_name || product.category || 'General'}
                 </span>
               </div>
               <h3 class="card-title">\${product.name}</h3>
@@ -127,7 +136,8 @@ export async function productsPage(env) {
         const searchTerm = document.getElementById('search-input').value.toLowerCase();
 
         const filtered = allProducts.filter(product => {
-          const matchesCategory = !category || product.category === category;
+          const productCategory = product.category_name || product.category;
+          const matchesCategory = !category || productCategory === category;
           const matchesSearch = !searchTerm ||
             product.name.toLowerCase().includes(searchTerm) ||
             (product.description && product.description.toLowerCase().includes(searchTerm));

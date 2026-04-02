@@ -52,19 +52,50 @@ export async function handleProducts(request, env, corsHeaders) {
 // Get all products
 async function getAllProducts(env, corsHeaders, request) {
   try {
+    const url = request ? new URL(request.url) : null;
+    const categoryId = url?.searchParams?.get('category_id');
+    const categoryName = url?.searchParams?.get('category');
+
     // Check if this is an authenticated admin request
     const authHeader = request?.headers?.get('Authorization');
     const isAdmin = authHeader && authHeader.startsWith('Bearer ');
 
-    // Admin can see all products, public can only see active ones
-    let query;
+    // Build query with optional category filter and join
+    let query, params = [];
+    let whereConditions = [];
+
     if (isAdmin) {
-      query = env.DB.prepare('SELECT * FROM products ORDER BY created_at DESC');
+      // Admin sees all products
+      if (categoryId) {
+        whereConditions.push('p.category_id = ?');
+        params.push(categoryId);
+      }
+      if (categoryName) {
+        whereConditions.push('(p.category = ? OR c.name = ?)');
+        params.push(categoryName, categoryName);
+      }
     } else {
-      query = env.DB.prepare('SELECT * FROM products WHERE is_active = 1 ORDER BY created_at DESC');
+      // Public sees only active products
+      whereConditions.push('p.is_active = 1');
+      if (categoryId) {
+        whereConditions.push('p.category_id = ?');
+        params.push(categoryId);
+      }
+      if (categoryName) {
+        whereConditions.push('(p.category = ? OR c.name = ?)');
+        params.push(categoryName, categoryName);
+      }
     }
 
-    const { results } = await query.all();
+    const whereClause = whereConditions.length > 0 ? 'WHERE ' + whereConditions.join(' AND ') : '';
+
+    const { results } = await env.DB.prepare(
+      `SELECT p.*, c.name as category_name 
+       FROM products p 
+       LEFT JOIN categories c ON p.category_id = c.id 
+       ${whereClause}
+       ORDER BY p.created_at DESC`
+    ).bind(...params).all();
 
     return new Response(JSON.stringify({ success: true, data: results }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -147,8 +178,8 @@ async function createProduct(request, env, corsHeaders) {
     const data = await request.json();
 
     const result = await env.DB.prepare(
-      `INSERT INTO products (name, description, detailed_description, specifications, image_url, gallery_images, category, is_featured, is_active)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      `INSERT INTO products (name, description, detailed_description, specifications, image_url, gallery_images, category_id, category, is_featured, is_active)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     ).bind(
       data.name,
       data.description || null,
@@ -156,6 +187,7 @@ async function createProduct(request, env, corsHeaders) {
       data.specifications || null,
       data.image_url || null,
       data.gallery_images ? JSON.stringify(data.gallery_images) : null,
+      data.category_id || null,
       data.category || null,
       data.is_featured ? 1 : 0,
       data.is_active !== undefined ? data.is_active : 1
@@ -200,6 +232,7 @@ async function updateProduct(request, env, productId, corsHeaders) {
         specifications = ?,
         image_url = ?,
         gallery_images = ?,
+        category_id = ?,
         category = ?,
         is_featured = ?,
         is_active = ?,
@@ -212,6 +245,7 @@ async function updateProduct(request, env, productId, corsHeaders) {
       data.specifications || null,
       data.image_url || null,
       data.gallery_images ? JSON.stringify(data.gallery_images) : null,
+      data.category_id !== undefined ? data.category_id : null,
       data.category || null,
       data.is_featured ? 1 : 0,
       data.is_active !== undefined ? data.is_active : 1,

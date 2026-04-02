@@ -35,6 +35,34 @@ export async function handleAdmin(request, env, corsHeaders) {
     return getDashboardStats(request, env, corsHeaders);
   }
 
+  // GET /api/admins - Get all admins (Super Admin only)
+  if (method === 'GET' && pathParts[2] === 'admins') {
+    return getAllAdmins(request, env, corsHeaders);
+  }
+
+  // GET /api/admins/:id - Get single admin (Super Admin only)
+  if (method === 'GET' && pathParts[2] === 'admins' && pathParts.length === 4) {
+    const adminId = pathParts[3];
+    return getAdmin(request, env, adminId, corsHeaders);
+  }
+
+  // POST /api/admins - Create new admin (Super Admin only)
+  if (method === 'POST' && pathParts[2] === 'admins') {
+    return createAdmin(request, env, corsHeaders);
+  }
+
+  // PUT /api/admins/:id - Update admin (Super Admin only)
+  if (method === 'PUT' && pathParts[2] === 'admins' && pathParts.length === 4) {
+    const adminId = pathParts[3];
+    return updateAdmin(request, env, adminId, corsHeaders);
+  }
+
+  // DELETE /api/admins/:id - Delete admin (Super Admin only)
+  if (method === 'DELETE' && pathParts[2] === 'admins' && pathParts.length === 4) {
+    const adminId = pathParts[3];
+    return deleteAdmin(request, env, adminId, corsHeaders);
+  }
+
   // PUT /api/admin/change-password - 修改当前登录用户密码 (新增)
   if (method === 'PUT' && pathParts[2] === 'change-password') {
     return changePassword(request, env, corsHeaders);
@@ -216,6 +244,11 @@ async function getDashboardStats(request, env, corsHeaders) {
       'SELECT COUNT(*) as pending_inquiries FROM inquiries WHERE status = "pending"'
     ).first();
 
+    // Get total categories
+    const { total_categories } = await env.DB.prepare(
+      'SELECT COUNT(*) as total_categories FROM categories WHERE is_active = 1'
+    ).first();
+
     // Get recent inquiries
     const { results: recent_inquiries } = await env.DB.prepare(
       `SELECT i.*, p.name as product_name
@@ -231,9 +264,247 @@ async function getDashboardStats(request, env, corsHeaders) {
         total_products,
         total_inquiries,
         pending_inquiries,
+        total_categories,
         recent_inquiries,
       },
     }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+}
+
+// Get all admins (Super Admin only)
+async function getAllAdmins(request, env, corsHeaders) {
+  try {
+    const admin = await requireSuperAdmin(request, env);
+    if (!admin) {
+      return new Response(JSON.stringify({ error: 'Unauthorized. Super admin access required.' }), {
+        status: 403,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const { results } = await env.DB.prepare(
+      'SELECT id, username, email, role, is_active, last_login, created_at FROM admins ORDER BY created_at DESC'
+    ).all();
+
+    return new Response(JSON.stringify({ success: true, data: results }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+}
+
+// Get single admin (Super Admin only)
+async function getAdmin(request, env, adminId, corsHeaders) {
+  try {
+    const admin = await requireSuperAdmin(request, env);
+    if (!admin) {
+      return new Response(JSON.stringify({ error: 'Unauthorized. Super admin access required.' }), {
+        status: 403,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const result = await env.DB.prepare(
+      'SELECT id, username, email, role, is_active, last_login, created_at FROM admins WHERE id = ?'
+    ).bind(adminId).first();
+
+    if (!result) {
+      return new Response(JSON.stringify({ error: 'Admin not found' }), {
+        status: 404,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    return new Response(JSON.stringify({ success: true, data: result }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+}
+
+// Create new admin (Super Admin only)
+async function createAdmin(request, env, corsHeaders) {
+  try {
+    const admin = await requireSuperAdmin(request, env);
+    if (!admin) {
+      return new Response(JSON.stringify({ error: 'Unauthorized. Super admin access required.' }), {
+        status: 403,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const data = await request.json();
+
+    // Validate required fields
+    if (!data.username || !data.email || !data.password) {
+      return new Response(JSON.stringify({ error: 'Username, email, and password are required' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (data.password.length < 6) {
+      return new Response(JSON.stringify({ error: 'Password must be at least 6 characters' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const passwordHash = await hashPassword(data.password);
+
+    const result = await env.DB.prepare(
+      `INSERT INTO admins (username, email, password_hash, role, is_active)
+       VALUES (?, ?, ?, ?, ?)`
+    ).bind(
+      data.username,
+      data.email,
+      passwordHash,
+      data.role || 'admin',
+      data.is_active !== undefined ? data.is_active : 1
+    ).run();
+
+    return new Response(JSON.stringify({
+      success: true,
+      data: { id: result.meta.last_row_id }
+    }), {
+      status: 201,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    if (error.message.includes('UNIQUE constraint failed')) {
+      return new Response(JSON.stringify({ error: 'Username or email already exists' }), {
+        status: 409,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+}
+
+// Update admin (Super Admin only)
+async function updateAdmin(request, env, adminId, corsHeaders) {
+  try {
+    const admin = await requireSuperAdmin(request, env);
+    if (!admin) {
+      return new Response(JSON.stringify({ error: 'Unauthorized. Super admin access required.' }), {
+        status: 403,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Prevent updating admin with id 1 (the default super admin)
+    if (adminId == 1) {
+      return new Response(JSON.stringify({ error: 'Cannot update the default super admin account' }), {
+        status: 403,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const data = await request.json();
+
+    // Build update query dynamically
+    let updates = [];
+    let params = [];
+
+    if (data.username !== undefined) {
+      updates.push('username = ?');
+      params.push(data.username);
+    }
+    if (data.email !== undefined) {
+      updates.push('email = ?');
+      params.push(data.email);
+    }
+    if (data.role !== undefined) {
+      updates.push('role = ?');
+      params.push(data.role);
+    }
+    if (data.is_active !== undefined) {
+      updates.push('is_active = ?');
+      params.push(data.is_active ? 1 : 0);
+    }
+    if (data.password !== undefined) {
+      if (data.password.length < 6) {
+        return new Response(JSON.stringify({ error: 'Password must be at least 6 characters' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      const passwordHash = await hashPassword(data.password);
+      updates.push('password_hash = ?');
+      params.push(passwordHash);
+    }
+
+    if (updates.length === 0) {
+      return new Response(JSON.stringify({ error: 'No fields to update' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    updates.push('updated_at = CURRENT_TIMESTAMP');
+    params.push(adminId);
+
+    const query = `UPDATE admins SET ${updates.join(', ')} WHERE id = ?`;
+
+    await env.DB.prepare(query).bind(...params).run();
+
+    return new Response(JSON.stringify({ success: true }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    if (error.message.includes('UNIQUE constraint failed')) {
+      return new Response(JSON.stringify({ error: 'Username or email already exists' }), {
+        status: 409,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+}
+
+// Delete admin (Super Admin only)
+async function deleteAdmin(request, env, adminId, corsHeaders) {
+  try {
+    const admin = await requireSuperAdmin(request, env);
+    if (!admin) {
+      return new Response(JSON.stringify({ error: 'Unauthorized. Super admin access required.' }), {
+        status: 403,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Prevent deleting admin with id 1 (the default super admin)
+    if (adminId == 1) {
+      return new Response(JSON.stringify({ error: 'Cannot delete the default super admin account' }), {
+        status: 403,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    await env.DB.prepare('DELETE FROM admins WHERE id = ?').bind(adminId).run();
+
+    return new Response(JSON.stringify({ success: true }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
